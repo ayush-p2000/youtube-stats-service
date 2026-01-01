@@ -4,11 +4,10 @@ import { useAppSelector } from '@/lib/hooks'
 import { Youtube } from 'lucide-react'
 
 export default function LoadingOverlay() {
-    const { statsLoading, sentimentLoading, predictionLoading } = useAppSelector((state) => state.video)
+    const { statsLoading, sentimentLoading, predictionLoading, isNavigating } = useAppSelector((state) => state.video)
 
-    // Show overlay if any major loading is happening
-    // Note: We might want to be more specific later, but for now we'll show it for all
-    const isLoading = statsLoading || sentimentLoading || predictionLoading
+    // Show overlay if any major loading is happening or if navigating
+    const isLoading = statsLoading || sentimentLoading || predictionLoading || isNavigating
 
     if (!isLoading) return null
 

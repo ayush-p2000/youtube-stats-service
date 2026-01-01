@@ -323,6 +323,6 @@ export const videoSlice = createSlice({
     },
 })
 
-export const { setVideoUrl, setRedirectId, resetVideoState, clearRedirectId } = videoSlice.actions
+export const { setVideoUrl, setRedirectId, resetVideoState, clearRedirectId, setIsNavigating } = videoSlice.actions
 
 export default videoSlice.reducer

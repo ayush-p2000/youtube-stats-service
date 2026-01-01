@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { fetchVideoStats, resetVideoState } from '@/lib/features/videoSlice';
+import { fetchVideoStats, setIsNavigating, resetVideoState } from '@/lib/features/videoSlice';
 import SentimentAnalysis from '@/components/SentimentAnalysis';
 import TopicExtraction from '@/components/TopicExtraction';
 import PredictiveInsights from '@/components/PredictiveInsights';
@@ -19,7 +19,9 @@ export default function ResultsPage() {
     const fetchedVideoIdRef = useRef<string | null>(null);
 
     const handleBack = () => {
-        dispatch(resetVideoState());
+        // Set navigating state to show loading overlay during navigation
+        // The home page will reset the state when it mounts
+        dispatch(setIsNavigating(true));
     };
 
     useEffect(() => {
