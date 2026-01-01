@@ -47,26 +47,29 @@ export default function ResultsPage() {
     }, [id, videoId, stats, dispatch]);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-            <div className="max-w-6xl mx-auto px-6 mb-8 flex items-center justify-between">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] py-8 sm:py-12 transition-colors duration-300">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <Link
                     href="/"
                     onClick={handleBack}
-                    className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors font-bold"
+                    className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 font-semibold group"
                 >
-                    <i className="fa-solid fa-arrow-left"></i> Back to Search
+                    <i className="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform duration-200"></i> 
+                    <span>Back to Search</span>
                 </Link>
-                <div className="text-xs font-mono text-gray-400 bg-white dark:bg-gray-800 px-3 py-1 rounded-full border border-gray-100 dark:border-gray-700">
+                <div className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-white/60 dark:bg-[#181818]/60 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-gray-200/50 dark:border-gray-800/50">
                     ID: {id}
                 </div>
             </div>
 
             {error && (
-                <div className="max-w-6xl mx-auto px-6 py-12 text-center">
-                    <div className="bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-800/30 p-8 rounded-3xl">
-                        <h2 className="text-2xl font-bold text-rose-600 mb-2">Analysis Failed</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-                        <Link href="/" className="px-6 py-2 bg-rose-600 text-white rounded-xl font-bold">Try Another URL</Link>
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
+                    <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30 p-6 sm:p-8 rounded-2xl shadow-lg">
+                        <h2 className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Analysis Failed</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base">{error}</p>
+                        <Link href="/" className="inline-flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
+                            Try Another URL
+                        </Link>
                     </div>
                 </div>
             )}

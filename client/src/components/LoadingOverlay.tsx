@@ -1,7 +1,7 @@
 'use client'
 
 import { useAppSelector } from '@/lib/hooks'
-import { Youtube } from 'lucide-react'
+import { PlayArrow, Analytics } from '@mui/icons-material'
 
 export default function LoadingOverlay() {
     const { statsLoading, sentimentLoading, predictionLoading, isNavigating } = useAppSelector((state) => state.video)
@@ -12,28 +12,36 @@ export default function LoadingOverlay() {
     if (!isLoading) return null
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/40 dark:bg-gray-950/40 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="flex flex-col items-center gap-6 p-12 rounded-3xl bg-white dark:bg-gray-900 shadow-2xl border border-gray-100 dark:border-gray-800 scale-95 animate-in zoom-in duration-500">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 dark:bg-[#0f0f0f]/80 backdrop-blur-lg animate-in fade-in duration-300">
+            <div className="flex flex-col items-center gap-8 p-10 sm:p-12 rounded-2xl bg-white dark:bg-[#181818] shadow-2xl border border-gray-200/50 dark:border-gray-800/50 scale-95 animate-in zoom-in duration-500 max-w-md mx-4">
                 <div className="relative">
-                    <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-2xl animate-pulse" />
-                    <div className="relative bg-blue-600 p-5 rounded-2xl animate-bounce">
-                        <Youtube className="h-10 w-10 text-white" />
+                    <div className="absolute inset-0 bg-red-500/30 rounded-full blur-2xl animate-pulse" />
+                    <div className="relative bg-gradient-to-br from-red-600 to-red-700 p-6 rounded-2xl shadow-xl">
+                        <div className="relative">
+                            <PlayArrow className="h-12 w-12 text-white" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="h-12 w-12 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="text-center space-y-2">
-                    <h3 className="text-2xl font-black bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        Analyzing YouTube Data
-                    </h3>
-                    <p className="text-sm font-bold text-gray-400 uppercase tracking-widest animate-pulse">
-                        Please wait a moment...
+                <div className="text-center space-y-3">
+                    <div className="flex items-center justify-center gap-2">
+                        <Analytics className="h-5 w-5 text-red-600 dark:text-red-400" />
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {isNavigating ? 'Navigating...' : 'Analyzing YouTube Data'}
+                        </h3>
+                    </div>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        {isNavigating ? 'Please wait while we load the page...' : 'Processing video analytics and sentiment data...'}
                     </p>
                 </div>
 
                 <div className="flex gap-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" />
+                    <div className="w-2.5 h-2.5 bg-red-600 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                    <div className="w-2.5 h-2.5 bg-red-600 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                    <div className="w-2.5 h-2.5 bg-red-600 rounded-full animate-bounce" />
                 </div>
             </div>
         </div>

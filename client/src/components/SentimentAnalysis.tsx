@@ -2,6 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { analyzeSentiment } from '@/lib/features/videoSlice';
+import { Psychology, SentimentSatisfied, SentimentNeutral, SentimentDissatisfied, SmartToy, EmojiEmotions } from '@mui/icons-material';
 
 export default function SentimentAnalysis() {
     const dispatch = useAppDispatch();
@@ -45,52 +46,63 @@ export default function SentimentAnalysis() {
     const maxEmotion = sentiment ? Math.max(...Object.values(sentiment.emotions), 1) : 1;
 
     return (
-        <div className="w-full max-w-6xl mx-auto p-6 space-y-8">
-            <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                    <span className="w-2 h-8 bg-purple-600 rounded-full" />
-                    Audience Sentiment Analysis
-                </h3>
+        <div className="w-full max-w-6xl mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <Psychology className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                        Audience Sentiment Analysis
+                    </h3>
+                </div>
 
                 <button
                     onClick={handleRunAnalysis}
                     disabled={sentimentLoading}
-                    className="px-6 py-2 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-all disabled:opacity-50 shadow-lg hover:shadow-purple-500/20 flex items-center gap-2"
+                    className="px-5 sm:px-6 py-2.5 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 shadow-md hover:shadow-lg disabled:shadow-none flex items-center gap-2"
                 >
-                    <i className={`fa-solid ${sentimentLoading ? 'fa-spinner fa-spin' : 'fa-brain'}`}></i>
-                    {sentimentLoading ? 'Processing...' : sentiment ? 'Recalculate' : 'Analyze audience mood'}
+                    {sentimentLoading ? (
+                        <>
+                            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Processing...</span>
+                        </>
+                    ) : (
+                        <>
+                            <Psychology className="h-4 w-4" />
+                            <span>{sentiment ? 'Recalculate' : 'Analyze audience mood'}</span>
+                        </>
+                    )}
                 </button>
             </div>
 
             {sentiment && (
                 <div className="space-y-6 animate-in fade-in zoom-in-95 duration-700">
                     {/* Main Sentiment Card */}
-                    <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-100 dark:border-gray-700">
+                    <div className="bg-white dark:bg-[#181818] rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg border border-gray-200/50 dark:border-gray-800/50 hover:shadow-xl transition-all duration-300">
                         <div className="flex flex-col md:flex-row items-center gap-12">
 
-                            {/* Gauge Meter */}
-                            <div className="relative w-64 h-32 md:w-80 md:h-40 shrink-0">
-                                {/* Semi-circle background */}
-                                <div className="absolute inset-0 bg-linear-to-r from-red-500 via-gray-300 to-green-500 rounded-t-full opacity-20" />
-                                <div className="absolute inset-2 bg-white dark:bg-gray-800 rounded-t-full" />
-
-                                {/* Color Segments */}
-                                <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 100 50">
-                                    <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="#ef4444" strokeWidth="8" strokeDasharray="40 125.6" />
-                                    <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="#9ca3af" strokeWidth="8" strokeDasharray="45 125.6" strokeDashoffset="-40" />
-                                    <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="#22c55e" strokeWidth="8" strokeDasharray="40 125.6" strokeDashoffset="-85" />
-
-                                    {/* Needle */}
-                                    <g transform={`rotate(${needleRotation}, 50, 50)`}>
-                                        <line x1="50" y1="50" x2="50" y2="10" stroke="currentColor" strokeWidth="2" className="text-gray-900 dark:text-white" />
-                                        <circle cx="50" cy="50" r="3" fill="currentColor" className="text-gray-900 dark:text-white" />
-                                    </g>
+                            {/* Dashboard Style Gauge Meter */}
+                            <div className="relative w-72 h-44 md:w-96 md:h-52 flex items-center justify-center shrink-0 mx-auto">
+                            <svg width="100%" height="100%" viewBox="0 0 200 110" fill="none" className="absolute inset-0">
+                                    {/* Arc track */}
+                                    <path d="M 30 100 A 70 70 0 0 1 170 100" stroke="#e5e7eb" strokeWidth="12" fill="none" strokeLinecap="round" />
+                                    {/* Progress Arc */}
+                                    <path
+                                        d="M 30 100 A 70 70 0 0 1 170 100"
+                                        stroke="#2563eb"
+                                        strokeWidth="12"
+                                        fill="none"
+                                        strokeLinecap="round"
+                                        strokeDasharray="220"
+                                        strokeDashoffset={220 - ((sentiment.average_polarity + 1) / 2) * 220}
+                                        style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                                    />
                                 </svg>
-
-                                <div className="absolute bottom-0 left-0 w-full flex justify-between px-2 text-[10px] font-bold text-gray-400">
-                                    <span>CRITICAL</span>
-                                    <span>NEUTRAL</span>
-                                    <span>PRIME</span>
+                                {/* Main Score Value & Dashboard Labels */}
+                                <div className="absolute left-1/2 top-[54%] flex flex-col items-center w-full" style={{transform:'translateX(-50%)'}}>
+                                    <div className="text-6xl md:text-7xl font-extrabold mb-1 text-[#06b94d]" style={{letterSpacing: '-1px'}}>
+                                        {Math.round(((sentiment.average_polarity + 1) / 2) * 100)}
+                                    </div>
+                                    <div className="text-2xl font-extrabold text-[#757e8a] mb-1">Sentiment Score</div>
                                 </div>
                             </div>
 
@@ -105,18 +117,27 @@ export default function SentimentAnalysis() {
                                     </p>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="p-4 bg-green-50 dark:bg-green-900/10 rounded-2xl border border-green-100 dark:border-green-800/30">
-                                        <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-tighter mb-1">Joy</p>
-                                        <p className="text-2xl font-black text-gray-900 dark:text-white">{((sentiment.positive / sentiment.total) * 100).toFixed(0)}%</p>
+                                <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                                    <div className="p-3 sm:p-4 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-800/30">
+                                        <div className="flex items-center gap-1 mb-1">
+                                            <SentimentSatisfied className="h-3 w-3 text-green-600 dark:text-green-400" />
+                                            <p className="text-xs font-semibold text-green-600 dark:text-green-400 uppercase tracking-tighter">Joy</p>
+                                        </div>
+                                        <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{((sentiment.positive / sentiment.total) * 100).toFixed(0)}%</p>
                                     </div>
-                                    <div className="p-4 bg-gray-50 dark:bg-gray-900/10 rounded-2xl border border-gray-100 dark:border-gray-800/30">
-                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-tighter mb-1">Neutral</p>
-                                        <p className="text-2xl font-black text-gray-900 dark:text-white">{((sentiment.neutral / sentiment.total) * 100).toFixed(0)}%</p>
+                                    <div className="p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/10 rounded-xl border border-gray-100 dark:border-gray-800/30">
+                                        <div className="flex items-center gap-1 mb-1">
+                                            <SentimentNeutral className="h-3 w-3 text-gray-500" />
+                                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-tighter">Neutral</p>
+                                        </div>
+                                        <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{((sentiment.neutral / sentiment.total) * 100).toFixed(0)}%</p>
                                     </div>
-                                    <div className="p-4 bg-rose-50 dark:bg-rose-900/10 rounded-2xl border border-rose-100 dark:border-rose-800/30">
-                                        <p className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-tighter mb-1">Critical</p>
-                                        <p className="text-2xl font-black text-gray-900 dark:text-white">{((sentiment.negative / sentiment.total) * 100).toFixed(0)}%</p>
+                                    <div className="p-3 sm:p-4 bg-rose-50 dark:bg-rose-900/10 rounded-xl border border-rose-100 dark:border-rose-800/30">
+                                        <div className="flex items-center gap-1 mb-1">
+                                            <SentimentDissatisfied className="h-3 w-3 text-rose-600 dark:text-rose-400" />
+                                            <p className="text-xs font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-tighter">Critical</p>
+                                        </div>
+                                        <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{((sentiment.negative / sentiment.total) * 100).toFixed(0)}%</p>
                                     </div>
                                 </div>
                             </div>
@@ -124,9 +145,9 @@ export default function SentimentAnalysis() {
                     </div>
 
                     {/* Emotion Breakdown Card */}
-                    <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700">
-                        <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
-                            <i className="fa-solid fa-masks-theater text-purple-500"></i>
+                    <div className="bg-white dark:bg-[#181818] rounded-2xl p-6 sm:p-8 shadow-lg border border-gray-200/50 dark:border-gray-800/50 hover:shadow-xl transition-all duration-300">
+                        <h4 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-3">
+                            <EmojiEmotions className="h-5 w-5 text-purple-500" />
                             Emotion Breakdown
                         </h4>
 
@@ -158,11 +179,11 @@ export default function SentimentAnalysis() {
                     </div>
 
                     {/* Spam & Sarcasm Detection Card */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         {/* Spam Detection */}
-                        <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl border border-gray-100 dark:border-gray-700">
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-3">
-                                <i className="fa-solid fa-robot text-amber-500"></i>
+                        <div className="bg-white dark:bg-[#181818] rounded-2xl p-5 sm:p-6 shadow-lg border border-gray-200/50 dark:border-gray-800/50 hover:shadow-xl transition-all duration-300">
+                            <h4 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-3">
+                                <SmartToy className="h-5 w-5 text-amber-500" />
                                 Spam & Bot Detection
                             </h4>
 
@@ -200,9 +221,9 @@ export default function SentimentAnalysis() {
                         </div>
 
                         {/* Sarcasm Detection */}
-                        <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl border border-gray-100 dark:border-gray-700">
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-3">
-                                <i className="fa-solid fa-face-rolling-eyes text-indigo-500"></i>
+                        <div className="bg-white dark:bg-[#181818] rounded-2xl p-5 sm:p-6 shadow-lg border border-gray-200/50 dark:border-gray-800/50 hover:shadow-xl transition-all duration-300">
+                            <h4 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-3">
+                                <SentimentNeutral className="h-5 w-5 text-indigo-500" />
                                 Sarcasm Indicator
                             </h4>
 
