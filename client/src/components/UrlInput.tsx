@@ -1,13 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { setVideoUrl, parseVideoUrl } from '@/lib/features/videoSlice';
+import { setVideoUrl, parseVideoUrl, fetchVideoStats } from '@/lib/features/videoSlice';
 
 export default function UrlInput() {
     const dispatch = useAppDispatch();
     const { url, loading, error, videoId } = useAppSelector((state) => state.video);
     const [inputUrl, setInputUrl] = useState(url);
+
+    useEffect(() => {
+        if (videoId) {
+            dispatch(fetchVideoStats({ videoId }));
+        }
+    }, [videoId, dispatch]);
 
     const handleAnalyze = () => {
         if (inputUrl) {
