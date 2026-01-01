@@ -4,7 +4,7 @@ import * as aiService from '../services/aiService.js';
 export const getPredictiveAnalytics = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { videoId } = req.params;
-        const { stats, sentiment } = req.body;
+        const { stats, sentiment, comments } = req.body;
 
         if (!videoId) {
             res.status(400).json({ status: 'error', message: 'Video ID is required' });
@@ -16,7 +16,7 @@ export const getPredictiveAnalytics = async (req: Request, res: Response, next: 
             return;
         }
 
-        const prediction = await aiService.runPredictiveAnalytics(stats, sentiment);
+        const prediction = await aiService.runPredictiveAnalytics(stats, sentiment, comments);
 
         res.json({
             status: 'success',

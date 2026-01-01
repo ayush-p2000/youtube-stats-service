@@ -4,7 +4,8 @@ export const MOCK_VIDEO_STATS = {
         description: "Full guide on filling the GKS application forms.",
         thumbnails: {
             high: { url: "https://i.ytimg.com/vi/7nSyWvjyaHM/hqdefault.jpg" }
-        }
+        },
+        publishedAt: "2025-01-01T00:00:00Z"
     },
     statistics: {
         viewCount: "5388",

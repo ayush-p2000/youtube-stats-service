@@ -9,6 +9,7 @@ interface VideoStatsResponse {
             title: string;
             description: string;
             thumbnails: Record<string, { url: string }>;
+            publishedAt: string;
         };
         statistics: {
             viewCount: string;

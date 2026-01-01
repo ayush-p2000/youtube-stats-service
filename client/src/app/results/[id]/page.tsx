@@ -71,10 +71,10 @@ export default function ResultsPage() {
 
             {!error && (
                 <>
-                    <SentimentAnalysis />
                     <TopicExtraction />
-                    <PredictiveInsights />
                     <StatsDisplay />
+                    <SentimentAnalysis />
+                    <PredictiveInsights />
                 </>
             )}
         </div>

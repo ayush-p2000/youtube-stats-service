@@ -47,6 +47,7 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
                 viewCount: videoData.statistics.viewCount,
                 likeCount: videoData.statistics.likeCount,
                 commentCount: videoData.statistics.commentCount,
+                publishedAt: videoData.snippet.publishedAt,
             };
         }
 

@@ -6,6 +6,7 @@ interface VideoStats {
     viewCount: string;
     likeCount: string;
     commentCount: string;
+    publishedAt: string;
 }
 
 interface Comment {
@@ -47,6 +48,11 @@ interface PredictionData {
         growth_trend: string;
     };
     recommendations: string[];
+    chart_data?: {
+        date: string;
+        views: number;
+        regression: number;
+    }[];
 }
 
 interface VideoState {
@@ -61,6 +67,7 @@ interface VideoState {
     statsLoading: boolean;
     sentimentLoading: boolean;
     predictionLoading: boolean;
+    isNavigating: boolean;
     error: string | null;
 }
 
@@ -76,6 +83,7 @@ const initialState: VideoState = {
     statsLoading: false,
     sentimentLoading: false,
     predictionLoading: false,
+    isNavigating: false,
     error: null,
 }
 
@@ -166,7 +174,7 @@ export const analyzeSentiment = createAsyncThunk(
 // Async thunk for predictive analytics
 export const predictMetrics = createAsyncThunk(
     'video/predictMetrics',
-    async ({ videoId, stats, sentiment }: { videoId: string; stats: VideoStats; sentiment?: SentimentData }, { rejectWithValue }) => {
+    async ({ videoId, stats, sentiment, comments }: { videoId: string; stats: VideoStats; sentiment?: SentimentData; comments?: Comment[] }, { rejectWithValue }) => {
         try {
             const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
             const response = await fetch(`${serverUrl}/api/predict/${videoId}`, {
@@ -174,7 +182,7 @@ export const predictMetrics = createAsyncThunk(
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ stats, sentiment }),
+                body: JSON.stringify({ stats, sentiment, comments }),
             });
 
             const data = await response.json();
@@ -213,7 +221,11 @@ export const videoSlice = createSlice({
             state.statsLoading = false;
             state.sentimentLoading = false;
             state.predictionLoading = false;
+            state.isNavigating = false;
             state.error = null;
+        },
+        setIsNavigating: (state, action: PayloadAction<boolean>) => {
+            state.isNavigating = action.payload;
         },
         clearRedirectId: (state) => {
             state.redirectId = null;

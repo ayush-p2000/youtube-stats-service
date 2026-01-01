@@ -103,7 +103,7 @@ export const analyzeCommentsSentiment = (comments: string[]): Promise<SentimentA
     });
 };
 
-export const runPredictiveAnalytics = (stats: any, sentiment?: any): Promise<PredictiveAnalyticsResult> => {
+export const runPredictiveAnalytics = (stats: any, sentiment?: any, comments?: any[]): Promise<PredictiveAnalyticsResult> => {
     return new Promise((resolve, reject) => {
         const pythonScriptPath = path.join(__dirname, '../ml/predictive_analytics.py');
         const pythonProcess = spawn('python', [pythonScriptPath], {
@@ -137,7 +137,7 @@ export const runPredictiveAnalytics = (stats: any, sentiment?: any): Promise<Pre
         });
 
         try {
-            const inputData = JSON.stringify({ stats, sentiment, timestamp: new Date().toISOString() });
+            const inputData = JSON.stringify({ stats, sentiment, comments, timestamp: new Date().toISOString() });
             pythonProcess.stdin.write(inputData);
             pythonProcess.stdin.end();
         } catch (err) {
