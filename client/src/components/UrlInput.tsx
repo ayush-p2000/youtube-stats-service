@@ -2,18 +2,28 @@
 
 import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { setVideoUrl, parseVideoUrl, fetchVideoStats } from '@/lib/features/videoSlice';
+import { setVideoUrl, parseVideoUrl, clearRedirectId, resetVideoState } from "@/lib/features/videoSlice";
+import { useRouter } from "next/navigation";
 
 export default function UrlInput() {
     const dispatch = useAppDispatch();
-    const { url, loading, error, videoId } = useAppSelector((state) => state.video);
-    const [inputUrl, setInputUrl] = useState(url);
+    const router = useRouter();
+    const { loading, error, redirectId, videoId } = useAppSelector((state) => state.video);
+    const [inputUrl, setInputUrl] = useState("");
 
     useEffect(() => {
-        if (videoId) {
-            dispatch(fetchVideoStats({ videoId }));
+        // Reset state on mount to ensure a clean slate
+        dispatch(resetVideoState());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (redirectId) {
+            const uniqueId = `${redirectId}-${Date.now()}`;
+            router.push(`/results/${uniqueId}`);
+            // Clear the trigger immediately after redirection
+            dispatch(clearRedirectId());
         }
-    }, [videoId, dispatch]);
+    }, [redirectId, router, dispatch]);
 
     const handleAnalyze = () => {
         if (inputUrl) {

@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import * as youtubeService from '../services/youtubeService.js';
+import { MOCK_VIDEO_STATS, MOCK_COMMENTS_RESPONSE } from '../utils/mockYoutubeData.js';
 
 export const getStats = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -17,14 +18,25 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
             return;
         }
 
-        // Only fetch video stats if it's the first page (no token)
-        const videoDataPromise = pageToken ? Promise.resolve(null) : youtubeService.getVideoStats(videoId, apiKey);
-        const commentsPromise = youtubeService.getVideoComments(videoId, apiKey, pageToken);
+        // Mock data logic
+        const useMock = process.env.USE_MOCK_DATA === 'true' || apiKey === 'MOCK';
 
-        const [videoData, commentsResponse] = await Promise.all([
-            videoDataPromise,
-            commentsPromise
-        ]);
+        let videoData, commentsResponse;
+
+        if (useMock) {
+            console.log('Using Mock YouTube Data for stats');
+            videoData = MOCK_VIDEO_STATS;
+            commentsResponse = pageToken ? { items: [], nextPageToken: null } : MOCK_COMMENTS_RESPONSE;
+        } else {
+            // Only fetch video stats if it's the first page (no token)
+            const videoDataPromise = pageToken ? Promise.resolve(null) : youtubeService.getVideoStats(videoId, apiKey);
+            const commentsPromise = youtubeService.getVideoComments(videoId, apiKey, pageToken);
+
+            [videoData, commentsResponse] = await Promise.all([
+                videoDataPromise,
+                commentsPromise
+            ]);
+        }
 
         let stats = null;
         if (videoData) {
@@ -38,7 +50,21 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
             };
         }
 
-        const comments = commentsResponse.items.map((thread: any) => ({
+        interface CommentThread {
+            id: string;
+            snippet: {
+                topLevelComment: {
+                    snippet: {
+                        textDisplay: string;
+                        authorDisplayName: string;
+                        likeCount: number;
+                        publishedAt: string;
+                    };
+                };
+            };
+        }
+
+        const comments = (commentsResponse.items as CommentThread[]).map((thread) => ({
             id: thread.id,
             text: thread.snippet.topLevelComment.snippet.textDisplay,
             author: thread.snippet.topLevelComment.snippet.authorDisplayName,
