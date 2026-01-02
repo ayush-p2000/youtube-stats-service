@@ -15,7 +15,14 @@ export default function StatsDisplay() {
         </div>
     );
 
-    if (!stats) return null;
+    // if (!stats) return null;
+    if (!stats) return (
+        <div className="w-full text-center py-20">
+            <p className="text-gray-500 dark:text-gray-400 font-medium tracking-wide">
+                No statistics available for this video.
+            </p>
+        </div>
+    );
 
     const views = Number(stats.viewCount) || 0;
     const likes = Number(stats.likeCount) || 0;

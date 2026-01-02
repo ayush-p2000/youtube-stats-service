@@ -63,11 +63,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <footer className="fixed bottom-6 flex gap-6 flex-wrap items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300">
-        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">
-          Powered by YouTube Data API & AI ML Models
-        </p>
-      </footer>
     </div>
   );
 }

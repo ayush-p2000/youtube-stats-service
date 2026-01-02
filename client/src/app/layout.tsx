@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "YouTube Stats Analyzer | AI Sentiment",
-  description: "Analyze YouTube video statistics and audience sentiment using AI.",
+  description:
+    "Analyze YouTube video statistics and audience sentiment using AI.",
 };
 
 export default function RootLayout({
@@ -25,7 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning={true}>
+    <html
+      lang="en"
+      suppressHydrationWarning={true}
+      data-scroll-behavior="smooth"
+    >
       <head>
         <link
           rel="stylesheet"
@@ -34,14 +40,23 @@ export default function RootLayout({
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
+        <style>{`
+          :root {
+            --footer-height: 140px;
+          }
+          body {
+            padding-bottom: calc(var(--footer-height) + 1rem);
+          }
+        `}</style>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 dark:bg-[#0f0f0f] text-gray-900 dark:text-gray-100 min-h-screen pt-14 transition-colors duration-300`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen pt-16 sm:pt-20 transition-colors duration-300 text-gray-900 dark:text-gray-100 bg-[#f5f6fa] dark:bg-[#181a20]`}
       >
         <Providers>
           <Navbar />
           <LoadingOverlay />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>

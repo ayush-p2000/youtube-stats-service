@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { setVideoUrl, parseVideoUrl, clearRedirectId, resetVideoState } from "@/lib/features/videoSlice";
+import { setVideoUrl, parseVideoUrl, clearRedirectId, resetVideoState, fetchVideoStats } from "@/lib/features/videoSlice";
 import { useRouter } from "next/navigation";
 import { Search, PlayArrow, CheckCircle, ErrorOutline } from '@mui/icons-material';
 
@@ -27,7 +27,7 @@ export default function UrlInput() {
         }
     }, [redirectId, router, dispatch]);
 
-    const handleAnalyze = () => {
+    const handleAnalyze = async () => {
         if (inputUrl) {
             // Basic cleaning: extract the first valid-looking URL pattern
             // Only allow RFC 3986 valid characters in the URL part (excluding single quotes as requested)
@@ -42,7 +42,14 @@ export default function UrlInput() {
             }
 
             dispatch(setVideoUrl(cleanedUrl));
-            dispatch(parseVideoUrl(cleanedUrl));
+            const parsedVideoId = await dispatch(parseVideoUrl(cleanedUrl)).unwrap();
+            if (parsedVideoId) {
+                dispatch(fetchVideoStats({ videoId: parsedVideoId })).catch((error) => {
+                    if (process.env.NODE_ENV === "development") {
+                        console.error("Error fetching video stats:", error);
+                    }
+                });
+            }
         }
     };
 
@@ -78,7 +85,8 @@ export default function UrlInput() {
                     <button
                         onClick={handleAnalyze}
                         disabled={statsLoading || !inputUrl.trim()}
-                        className="px-6 py-3 bg-red-600 hover:bg-red-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-none flex items-center gap-2 min-w-[120px] justify-center"
+                        className="px-5 py-2.5 bg-red-600 hover:bg-red-700 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-none flex items-center gap-2 min-w-[110px] justify-center self-stretch"
+                        style={{ alignSelf: 'stretch', marginRight: 2, marginLeft: 2, marginTop: 2, marginBottom: 2 }}
                     >
                         {statsLoading ? (
                             <>

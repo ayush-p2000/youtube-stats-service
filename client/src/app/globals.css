@@ -64,3 +64,26 @@ html {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+
+@keyframes footer-gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-footer-gradient {
+  background-size: 200% 200%;
+  animation: footer-gradient-move 6s ease-in-out infinite;
+}
+
+/* Rainbow gradient animation for footer */
+@keyframes rainbow-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-rainbow-gradient {
+  background-size: 200% 200%;
+  animation: rainbow-move 8s linear infinite;
+}
