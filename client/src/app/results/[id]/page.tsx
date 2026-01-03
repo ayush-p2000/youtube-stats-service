@@ -1,19 +1,20 @@
+
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  fetchVideoStats,
-  setIsNavigating,
-} from "@/lib/features/videoSlice";
+import { setIsNavigating } from "@/lib/features/videoSlice";
 import SentimentAnalysis from "@/components/SentimentAnalysis";
 import TopicExtraction from "@/components/TopicExtraction";
 import PredictiveInsights from "@/components/PredictiveInsights";
 import StatsDisplay from "@/components/StatsDisplay";
 import Link from "next/link";
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio, CircularProgress, IconButton, Chip } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { Download } from "@mui/icons-material";
+import { useVideoDownload } from "@/lib/downloadHooks";
+import { fetchVideoStatsIfNeeded } from "@/lib/features/DownloadActions";
+import VideoDownloadDialog from "@/components/downloadDialogBox";
 
 export default function ResultsPage() {
   const { id } = useParams();
@@ -24,116 +25,35 @@ export default function ResultsPage() {
   
   // Reconstruct URL from videoId if url is missing (e.g., on page reload)
   const videoUrl = url || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : null);
-  const [open, setOpen] = useState(false);
-  const [exts, setExts] = useState<string[]>([]);
-  const [selectedExt, setSelectedExt] = useState<string>("mp4");
-  const [loadingExts, setLoadingExts] = useState(false);
-  const [downloading, setDownloading] = useState(false);
-  const [downloadError, setDownloadError] = useState<string | null>(null);
+
+  // Use the download hook
+  const {
+    open,
+    exts,
+    selectedExt,
+    loadingExts,
+    downloading,
+    downloadError,
+    setSelectedExt,
+    handleOpenDownload,
+    handleDownload,
+    handleCloseDialog,
+  } = useVideoDownload({ videoUrl, videoTitle: stats?.title });
 
   const handleBack = () => {
     dispatch(setIsNavigating(true));
   };
 
-  const sanitizeFileName = (name: string) =>
-    name.replace(/[\\/:*?"<>|]+/g, "").trim() || "video";
-
-  const handleOpenDownload = async () => {
-    if (!videoUrl) return;
-    setOpen(true);
-    setLoadingExts(true);
-    setDownloadError(null);
-    try {
-      const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
-      const res = await fetch(`${serverUrl}/api/formats`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: videoUrl }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch formats");
-      }
-      const availableExts: string[] = Array.isArray(data.exts) ? data.exts : [];
-      const unique = Array.from(new Set(availableExts.map((e) => String(e).toLowerCase())));
-      const sorted = unique.sort((a, b) => {
-        if (a === "mp4" && b !== "mp4") return -1;
-        if (b === "mp4" && a !== "mp4") return 1;
-        return a.localeCompare(b);
-      });
-      setExts(sorted);
-      if (sorted.includes("mp4")) {
-        setSelectedExt("mp4");
-      } else if (sorted.length > 0) {
-        setSelectedExt(sorted[0]);
-      } else {
-        setSelectedExt("mp4");
-      }
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Network error";
-      setDownloadError(msg);
-      setExts([]);
-    } finally {
-      setLoadingExts(false);
-    }
-  };
-
-  const handleDownload = async () => {
-    if (!videoUrl || !selectedExt) return;
-    setDownloading(true);
-    setDownloadError(null);
-    try {
-      const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
-      const res = await fetch(`${serverUrl}/api/download`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: videoUrl, format: selectedExt }),
-      });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || "Download failed");
-      }
-      const blob = await res.blob();
-      const dlUrl = URL.createObjectURL(blob);
-      const filenameBase = stats?.title ? sanitizeFileName(stats.title) : "video";
-      const a = document.createElement("a");
-      a.href = dlUrl;
-      a.download = `${filenameBase}.${selectedExt}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(dlUrl);
-      setOpen(false);
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Network error";
-      setDownloadError(msg);
-    } finally {
-      setDownloading(false);
-    }
-  };
-
   useEffect(() => {
     if (id && typeof id === "string") {
-      const lastDashIndex = id.lastIndexOf("-");
-      const actualVideoId = lastDashIndex !== -1 ? id.substring(0, lastDashIndex) : id;
-      const alreadyFetched = fetchedVideoIdRef.current === actualVideoId;
-      
-      // Check if we already have stats for this video OR if it's currently loading
-      const hasValidStats = stats && videoId === actualVideoId;
-      const isLoadingStats = statsLoading && videoId === actualVideoId;
-
-      // Only fetch if:
-      // 1. We don't have valid stats AND
-      // 2. It's not currently loading AND
-      // 3. We haven't already fetched this ID
-      if (!hasValidStats && !isLoadingStats && !alreadyFetched) {
-        fetchedVideoIdRef.current = actualVideoId;
-        dispatch(fetchVideoStats({ videoId: actualVideoId })).catch((error) => {
-          if (process.env.NODE_ENV === "development") {
-            console.error("Error fetching video stats:", error);
-          }
-        });
-      }
+      fetchVideoStatsIfNeeded({
+        dispatch,
+        id,
+        videoId,
+        stats,
+        statsLoading,
+        fetchedVideoIdRef,
+      });
     }
   }, [id, videoId, stats, statsLoading, dispatch]);
 
@@ -207,54 +127,17 @@ export default function ResultsPage() {
           <SentimentAnalysis />
           <TopicExtraction />
           <PredictiveInsights />
-          <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="xs">
-            <DialogTitle>Select format</DialogTitle>
-            <DialogContent>
-              {loadingExts ? (
-                <div className="flex items-center gap-3 py-3">
-                  <CircularProgress size={20} />
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Loading available formats...</span>
-                </div>
-              ) : exts.length === 0 ? (
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  No downloadable formats found for this video. Try again later.
-                </p>
-              ) : (
-                <RadioGroup
-                  value={selectedExt}
-                  onChange={(e) => setSelectedExt((e.target as HTMLInputElement).value)}
-                >
-                  {exts.map((ext) => (
-                    <FormControlLabel
-                      key={ext}
-                      value={ext}
-                      control={<Radio />}
-                      label={
-                        <span className="inline-flex items-center gap-2">
-                          <span>{ext.toUpperCase()}</span>
-                          {ext === "mp4" && <Chip label="Recommended" size="small" color="success" />}
-                        </span>
-                      }
-                    />
-                  ))}
-                </RadioGroup>
-              )}
-              {downloadError && (
-                <p className="mt-2 text-sm text-red-600 dark:text-red-400">{downloadError}</p>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpen(false)} disabled={downloading}>Cancel</Button>
-              <Button
-                onClick={handleDownload}
-                disabled={downloading || loadingExts || exts.length === 0}
-                variant="contained"
-                color="primary"
-              >
-                {downloading ? <CircularProgress size={20} /> : "Download"}
-              </Button>
-            </DialogActions>
-          </Dialog>
+          <VideoDownloadDialog
+            open={open}
+            exts={exts}
+            selectedExt={selectedExt}
+            loadingExts={loadingExts}
+            downloading={downloading}
+            downloadError={downloadError}
+            onClose={handleCloseDialog}
+            onExtChange={setSelectedExt}
+            onDownload={handleDownload}
+          />
         </>
       )}
     </div>
