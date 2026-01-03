@@ -46,6 +46,32 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Add to globals.css */
+:root {
+  --footer-height: 140px;
+}
+
+body {
+  padding-bottom: calc(var(--footer-height) + 1rem);
+}
+
+@keyframes rainbow-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Dark mode opacity override */
+html.dark .footer-rainbow-gradient {
+  opacity: 0.05 !important;
+}
+
 /* Custom scrollbar for webkit browsers */
 ::-webkit-scrollbar {
   width: 8px;

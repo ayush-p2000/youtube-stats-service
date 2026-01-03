@@ -28,14 +28,16 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
             videoData = MOCK_VIDEO_STATS;
             commentsResponse = pageToken ? { items: [], nextPageToken: null } : MOCK_COMMENTS_RESPONSE;
         } else {
-            // Only fetch video stats if it's the first page (no token)
             const videoDataPromise = pageToken ? Promise.resolve(null) : youtubeService.getVideoStats(videoId, apiKey);
-            const commentsPromise = youtubeService.getVideoComments(videoId, apiKey, pageToken);
-
-            [videoData, commentsResponse] = await Promise.all([
-                videoDataPromise,
-                commentsPromise
-            ]);
+            let commentsPromise: Promise<any>;
+            commentsPromise = youtubeService.getVideoComments(videoId, apiKey, pageToken).catch((err: any) => {
+                const msg = typeof err?.response?.data?.error?.message === 'string' ? err.response.data.error.message : '';
+                if (err?.response?.status === 403 && msg.toLowerCase().includes('disabled comments')) {
+                    return { items: [], nextPageToken: undefined };
+                }
+                throw err;
+            });
+            [videoData, commentsResponse] = await Promise.all([videoDataPromise, commentsPromise]);
         }
 
         let stats = null;

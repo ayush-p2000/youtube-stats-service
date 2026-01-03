@@ -50,6 +50,7 @@ const Footer: React.FC = () => {
   return (
     <footer
       id="main-footer"
+      suppressHydrationWarning
       className="fixed left-0 right-0 bottom-0 z-40 flex flex-col items-center justify-center opacity-100 transition-all duration-500 px-8 py-5 sm:py-6 shadow-lg bg-[#f5f6fa]/85 dark:bg-[#23242a]/90 overflow-visible group"
       style={{
         filter: "brightness(1.15) saturate(1.05)",
