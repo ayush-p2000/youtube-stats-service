@@ -89,26 +89,26 @@ export default function PredictiveInsights() {
 
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 relative">
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="p-5 bg-blue-500/10 rounded-4xl text-blue-600 dark:text-blue-500 border border-blue-500/20 shadow-2xl shadow-blue-500/10 backdrop-blur-md">
-            <TrendingUp sx={{ fontSize: 36 }} />
+        <div className="flex items-center gap-4 sm:gap-5 relative z-10 max-w-full">
+          <div className="p-3 sm:p-5 bg-blue-500/10 rounded-3xl sm:rounded-4xl text-blue-600 dark:text-blue-500 border border-blue-500/20 shadow-2xl shadow-blue-500/10 backdrop-blur-md shrink-0">
+            <TrendingUp className="text-2xl sm:text-4xl" />
           </div>
-          <div>
-            <h3 className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tighter flex items-center gap-4">
+          <div className="min-w-0">
+            <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tighter flex flex-wrap items-center gap-x-3 gap-y-1">
               Predictive <span className="text-blue-600 dark:text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]">Analytics</span>
             </h3>
-            <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[11px] tracking-[0.4em] mt-2 flex items-center gap-2">
-              Temporal Projection <span className="w-8 h-px bg-zinc-800 dark:bg-white/10" /> Heuristic Models
+            <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
+              Temporal Projection <span className="hidden sm:block w-8 h-px bg-zinc-800 dark:bg-white/10" /> Heuristic Models
             </p>
           </div>
         </div>
 
-        <div className="relative group p-[2.5px] rounded-3xl overflow-hidden w-[320px]">
+        <div className="relative group p-[2.5px] rounded-3xl overflow-hidden w-full max-w-sm lg:w-[320px]">
           <div className="absolute -inset-full bg-[conic-gradient(from_0deg,transparent_0deg,transparent_270deg,#3b82f6_360deg)] animate-[spin_3s_linear_infinite] opacity-40 group-hover:opacity-100 transition-opacity duration-500" />
           <button
             onClick={handleRunPrediction}
             disabled={predictionLoading}
-            className="relative w-full px-10 py-5 cursor-pointer bg-white dark:bg-zinc-950 text-black dark:text-white rounded-[1.4rem] font-black text-sm uppercase tracking-[0.2em] transition-all duration-500 transform active:scale-95 disabled:opacity-50 overflow-hidden flex items-center justify-center gap-4"
+            className="relative w-full px-6 sm:px-10 py-4 sm:py-5 cursor-pointer bg-white dark:bg-zinc-950 text-black dark:text-white rounded-[1.4rem] font-black text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-500 transform active:scale-95 disabled:opacity-50 overflow-hidden flex items-center justify-center gap-3 sm:gap-4"
           >
             <div className="absolute inset-0 w-1/4 h-full bg-linear-to-r from-transparent via-blue-500/20 to-transparent skew-x-[-30deg] animate-[shimmer_2s_infinite]" />
 
@@ -143,7 +143,7 @@ export default function PredictiveInsights() {
               <Paper
                 elevation={0}
                 sx={{ bgcolor: 'transparent' }}
-                className="p-10 border border-gray-200/50 dark:border-white/10 bg-white/80 dark:bg-zinc-950/40 backdrop-blur-3xl rounded-[3rem] shadow-2xl ring-1 ring-inset ring-black/5 dark:ring-white/5 relative overflow-hidden"
+                className="p-6 sm:p-10 border border-gray-200/50 dark:border-white/10 bg-white/80 dark:bg-zinc-950/40 backdrop-blur-3xl rounded-[2rem] sm:rounded-[3rem] shadow-2xl ring-1 ring-inset ring-black/5 dark:ring-white/5 relative overflow-hidden"
               >
                 {/* Border Beam */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
@@ -178,7 +178,7 @@ export default function PredictiveInsights() {
                   </div>
                 </div>
 
-                <div className="h-[400px] w-full relative z-10">
+                <div className="h-[300px] sm:h-[400px] w-full relative z-10">
                   <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={prediction.chart_data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <defs>

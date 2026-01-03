@@ -52,17 +52,52 @@ def calculate_earnings_data(stats, sentiment=None, comments=[]):
     forecast_7d = (views_per_day * 7) * (rpm / 1000)
     forecast_30d = (views_per_day * 30) * (rpm / 1000)
     
+    daily_est_revenue = (views_per_day / 1000) * rpm
+    
     # Historical data proxy (simplified for display)
-    history = []
-    for i in range(12, -1, -2):
-        date = (datetime.now() - timedelta(days=i*5)).strftime('%Y-%m-%d')
-        # Simulate some growth
-        progression = (13 - i) / 13
-        history.append({
-            "date": date,
-            "earnings": round(total_earnings * progression, 2),
-            "views": int(views * progression)
-        })
+    # Generate 3 datasets based on the estimated daily revenue
+    
+    def generate_history(days, points_count, period_type="daily"):
+        history_data = []
+        now = datetime.now()
+        
+        # Base value for each point depends on the period type
+        if period_type == "monthly":
+            base_val = daily_est_revenue * 30
+        else:
+            base_val = daily_est_revenue
+            
+        import random
+        
+        for i in range(points_count - 1, -1, -1):
+            if days == 365:
+                 # Monthly points for year view
+                date = (now - timedelta(days=i*30)).strftime('%Y-%m')
+            else:
+                # Daily points
+                date = (now - timedelta(days=i)).strftime('%m-%d')
+                
+            # Add some randomness and a slight trend
+            # Random variance between 0.8x and 1.2x
+            variance = random.uniform(0.8, 1.2)
+            
+            # Slight growth trend for recent data (unless i is large)
+            # 0 (recent) -> 1.05 boost, points_count (old) -> 0.95 drag
+            progress = (points_count - i) / points_count
+            trend = 0.95 + (0.1 * progress)
+            
+            val = base_val * variance * trend
+            
+            history_data.append({
+                "date": date,
+                "earnings": round(val, 2),
+                "views": int((val / (rpm if rpm > 0 else 1)) * 1000)
+            })
+        return history_data
+
+    history_7d = generate_history(7, 7, "daily")
+    history_30d = generate_history(30, 30, "daily")
+    history_1y = generate_history(365, 12, "monthly")
 
     return {
         "estimated_cpm": cpm,
@@ -73,7 +108,9 @@ def calculate_earnings_data(stats, sentiment=None, comments=[]):
             "weekly": round(forecast_7d, 2),
             "monthly": round(forecast_30d, 2)
         },
-        "history": history,
+        "history_7d": history_7d,
+        "history_30d": history_30d,
+        "history_1y": history_1y,
         "currency": "USD",
         "confidence_score": 85 if len(comments) > 10 else 60
     }

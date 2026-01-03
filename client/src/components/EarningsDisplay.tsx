@@ -128,6 +128,27 @@ const EarningsDisplay: React.FC = () => {
         earningsLoading
     } = useSelector((state: RootState) => state.video);
 
+    const [selectedRange, setSelectedRange] = React.useState<'7D' | '30D' | '1Y'>('30D');
+    const [viewMode, setViewMode] = React.useState<'daily' | 'cumulative'>('daily');
+
+    const currentData = React.useMemo(() => {
+        if (!earnings) return [];
+        const rawData = selectedRange === '7D' ? earnings.history_7d :
+            selectedRange === '30D' ? earnings.history_30d :
+                earnings.history_1y;
+
+        if (viewMode === 'daily') return rawData;
+
+        let runningTotal = 0;
+        return rawData.map(point => {
+            runningTotal += point.earnings;
+            return {
+                ...point,
+                earnings: parseFloat(runningTotal.toFixed(2))
+            };
+        });
+    }, [earnings, selectedRange, viewMode]);
+
     const handleFetchEarnings = () => {
         if (videoId && stats) {
             dispatch(fetchEarnings({
@@ -153,26 +174,26 @@ const EarningsDisplay: React.FC = () => {
         <div className="w-full max-w-7xl mx-auto p-6 sm:p-10 space-y-10 sm:space-y-16 mb-32">
             {/* Header Section */}
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 relative">
-                <div className="flex items-center gap-5 relative z-10">
-                    <div className="p-5 bg-emerald-500/10 rounded-4xl text-emerald-600 dark:text-emerald-500 border border-emerald-500/20 shadow-2xl shadow-emerald-500/10 backdrop-blur-md">
-                        <AccountBalanceWallet sx={{ fontSize: 36 }} />
+                <div className="flex items-center gap-4 sm:gap-5 relative z-10 max-w-full">
+                    <div className="p-3 sm:p-5 bg-emerald-500/10 rounded-3xl sm:rounded-4xl text-emerald-600 dark:text-emerald-500 border border-emerald-500/20 shadow-2xl shadow-emerald-500/10 backdrop-blur-md shrink-0">
+                        <AccountBalanceWallet className="text-2xl sm:text-4xl" />
                     </div>
-                    <div>
-                        <h3 className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tighter flex items-center gap-4">
+                    <div className="min-w-0">
+                        <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tighter flex flex-wrap items-center gap-x-3 gap-y-1">
                             AI Earnings <span className="text-emerald-600 dark:text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]">Forecast</span>
                         </h3>
-                        <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[11px] tracking-[0.4em] mt-2 flex items-center gap-2">
-                            Neural Network <span className="w-8 h-px bg-zinc-800 dark:bg-white/10" /> Revenue Matrix
+                        <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
+                            Neural Network <span className="hidden sm:block w-8 h-px bg-zinc-800 dark:bg-white/10" /> Revenue Matrix
                         </p>
                     </div>
                 </div>
 
-                <div className="relative group p-[2.5px] rounded-3xl overflow-hidden w-[320px]">
+                <div className="relative group p-[2.5px] rounded-3xl overflow-hidden w-full max-w-sm lg:w-[320px]">
                     <div className="absolute -inset-full cursor-pointer bg-[conic-gradient(from_0deg,transparent_0deg,transparent_270deg,#10b981_360deg)] animate-[spin_3s_linear_infinite] opacity-40 group-hover:opacity-100 transition-opacity duration-500" />
                     <button
                         onClick={handleFetchEarnings}
                         disabled={earningsLoading}
-                        className="relative w-full px-10 cursor-pointer py-5 bg-white dark:bg-zinc-950 text-black dark:text-white rounded-[1.4rem] font-black text-sm uppercase tracking-[0.2em] transition-all duration-500 transform active:scale-95 disabled:opacity-50 overflow-hidden flex items-center justify-center gap-4"
+                        className="relative w-full px-6 sm:px-10 py-4 sm:py-5 cursor-pointer bg-white dark:bg-zinc-950 text-black dark:text-white rounded-[1.4rem] font-black text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-500 transform active:scale-95 disabled:opacity-50 overflow-hidden flex items-center justify-center gap-3 sm:gap-4"
                     >
                         <div className="absolute inset-0 w-1/4 h-full bg-linear-to-r from-transparent via-emerald-500/20 to-transparent skew-x-[-30deg] animate-[shimmer_2s_infinite]" />
 
@@ -230,20 +251,20 @@ const EarningsDisplay: React.FC = () => {
                         {/* Analysis Detail Grid */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                             {/* Forecast Milestones */}
-                            <motion.div variants={itemVariants} className="lg:col-span-5 h-full">
+                            <motion.div variants={itemVariants} className="lg:col-span-5 h-full order-2 lg:order-1">
                                 <Paper elevation={0} sx={{ bgcolor: 'transparent' }} className="p-10 border border-gray-200/50 dark:border-white/5 bg-white/80 dark:bg-zinc-950/40 backdrop-blur-3xl rounded-[3rem] h-full shadow-2xl relative overflow-hidden group ring-1 ring-inset ring-black/5 dark:ring-white/5">
                                     <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-emerald-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
-                                    <div className="flex items-center justify-between mb-12 relative z-10">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-emerald-500/10 rounded-2xl text-emerald-600 dark:text-emerald-500 border border-emerald-500/20 shadow-inner">
-                                                <TrendingUp sx={{ fontSize: 28 }} />
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-12 relative z-10 gap-4">
+                                        <div className="flex items-center gap-3 sm:gap-4">
+                                            <div className="p-2 sm:p-3 bg-emerald-500/10 rounded-xl sm:rounded-2xl text-emerald-600 dark:text-emerald-500 border border-emerald-500/20 shadow-inner">
+                                                <TrendingUp className="text-xl sm:text-2xl" />
                                             </div>
-                                            <Typography variant="h5" className="text-gray-900 dark:text-white font-black tracking-tight">
+                                            <Typography variant="h5" className="text-lg sm:text-2xl text-gray-900 dark:text-white font-black tracking-tight">
                                                 Revenue Nodes
                                             </Typography>
                                         </div>
-                                        <div className="px-5 py-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 text-[10px] font-black uppercase tracking-[0.3em] rounded-full border border-emerald-500/20 backdrop-blur-md">
+                                        <div className="px-4 sm:px-5 py-1.5 sm:py-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] rounded-full border border-emerald-500/20 backdrop-blur-md self-start sm:self-auto">
                                             CONFIDENCE: {earnings.confidence_score}%
                                         </div>
                                     </div>
@@ -257,17 +278,17 @@ const EarningsDisplay: React.FC = () => {
                                             <motion.div
                                                 key={idx}
                                                 whileHover={{ scale: 1.01, x: 8 }}
-                                                className={`p-7 rounded-4xl flex items-center justify-between transition-all duration-500 border ${item.highlight ? 'bg-emerald-500/5 dark:bg-emerald-500/10 border-emerald-500/20 shadow-xl shadow-emerald-500/5 ring-1 ring-emerald-500/10' : 'bg-transparent border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5'}`}
+                                                className={`p-5 sm:p-7 rounded-3xl sm:rounded-4xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-500 border ${item.highlight ? 'bg-emerald-500/5 dark:bg-emerald-500/10 border-emerald-500/20 shadow-xl shadow-emerald-500/5 ring-1 ring-emerald-500/10' : 'bg-transparent border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5'}`}
                                             >
-                                                <div>
-                                                    <Typography className="text-gray-500 dark:text-zinc-400 text-[11px] font-black uppercase tracking-[0.25em]">{item.label}</Typography>
-                                                    <Typography className="text-gray-400 dark:text-zinc-500 text-[9px] font-bold mt-1 opacity-60 tracking-widest">{item.period}</Typography>
+                                                <div className="flex flex-col gap-1">
+                                                    <Typography className="text-gray-500 dark:text-zinc-400 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.25em]">{item.label}</Typography>
+                                                    <Typography className="text-gray-400 dark:text-zinc-500 text-[8px] sm:text-[9px] font-bold opacity-60 tracking-widest leading-relaxed">{item.period}</Typography>
                                                 </div>
-                                                <div className="text-right">
-                                                    <Typography className={`text-3xl font-black tabular-nums ${item.highlight ? 'text-emerald-600 dark:text-emerald-500' : 'text-gray-900 dark:text-white'}`}>
+                                                <div className="flex flex-col sm:items-end gap-1">
+                                                    <Typography className={`text-2xl sm:text-3xl font-black tabular-nums ${item.highlight ? 'text-emerald-600 dark:text-emerald-500' : 'text-gray-900 dark:text-white'}`}>
                                                         +${item.value}
                                                     </Typography>
-                                                    <span className="text-[10px] text-zinc-500 font-black flex items-center justify-end gap-1.5 uppercase tracking-tighter mt-1 opacity-80">
+                                                    <span className="text-[9px] sm:text-[10px] text-zinc-500 font-black flex items-center sm:justify-end gap-1.5 uppercase tracking-tighter opacity-80">
                                                         COMPUTED <TrendingUp sx={{ fontSize: 12 }} />
                                                     </span>
                                                 </div>
@@ -278,25 +299,61 @@ const EarningsDisplay: React.FC = () => {
                             </motion.div>
 
                             {/* Revenue Trend Area Chart */}
-                            <motion.div variants={itemVariants} className="lg:col-span-7 h-full">
-                                <Paper elevation={0} sx={{ bgcolor: 'transparent' }} className="p-10 border border-gray-200/50 dark:border-white/5 bg-white/80 dark:bg-zinc-950/40 backdrop-blur-3xl rounded-[3rem] h-full shadow-2xl min-h-[500px] flex flex-col relative overflow-hidden group ring-1 ring-inset ring-black/5 dark:ring-white/5">
+                            <motion.div variants={itemVariants} className="lg:col-span-7 h-full order-1 lg:order-2">
+                                <Paper elevation={0} sx={{ bgcolor: 'transparent' }} className="p-6 sm:p-10 border border-gray-200/50 dark:border-white/5 bg-white/80 dark:bg-zinc-950/40 backdrop-blur-3xl rounded-[2rem] sm:rounded-[3rem] h-full shadow-2xl min-h-[350px] sm:min-h-[500px] flex flex-col relative overflow-hidden group ring-1 ring-inset ring-black/5 dark:ring-white/5">
                                     <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-blue-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
-                                    <div className="flex items-center justify-between mb-12 relative z-10">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-600 dark:text-blue-500 border border-blue-500/20 shadow-inner">
-                                                <CalendarMonth sx={{ fontSize: 28 }} />
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 relative z-10 w-full gap-4">
+                                        <div className="flex items-center gap-3 sm:gap-4">
+                                            <div className="p-2 sm:p-3 bg-blue-500/10 rounded-xl sm:rounded-2xl text-blue-600 dark:text-blue-500 border border-blue-500/20 shadow-inner">
+                                                <CalendarMonth className="text-xl sm:text-2xl" />
                                             </div>
-                                            <Typography variant="h5" className="text-gray-900 dark:text-white font-black tracking-tight">
+                                            <Typography variant="h5" className="text-lg sm:text-2xl text-gray-900 dark:text-white font-black tracking-tight">
                                                 Revenue Momentum
                                             </Typography>
                                         </div>
-                                        <div className="text-[10px] text-zinc-500 font-black uppercase tracking-[0.3em] opacity-80">30D HISTORICAL MATRIX</div>
+
+                                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+                                            {/* Range Selector */}
+                                            <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl overflow-x-auto w-full sm:w-auto no-scrollbar">
+                                                {(['7D', '30D', '1Y'] as const).map((range) => (
+                                                    <button
+                                                        key={range}
+                                                        onClick={() => setSelectedRange(range)}
+                                                        className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-[10px] font-black transition-all duration-300 whitespace-nowrap ${selectedRange === range
+                                                            ? 'bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 shadow-sm'
+                                                            : 'text-gray-500 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-white'
+                                                            }`}
+                                                    >
+                                                        {range}
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            {/* View Mode Toggle */}
+                                            <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl overflow-x-auto w-full sm:w-auto no-scrollbar">
+                                                {(['daily', 'cumulative'] as const).map((mode) => (
+                                                    <button
+                                                        key={mode}
+                                                        onClick={() => setViewMode(mode)}
+                                                        className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-[10px] font-black transition-all duration-300 uppercase ${viewMode === mode
+                                                            ? 'bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 shadow-sm'
+                                                            : 'text-gray-500 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-white'
+                                                            }`}
+                                                    >
+                                                        {mode}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div className="flex-1 w-full relative z-10">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={earnings.history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                                            <AreaChart
+                                                data={currentData}
+                                                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                                            >
                                                 <defs>
                                                     <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
                                                         <stop offset="5%" stopColor="#10b981" stopOpacity={0.6} />

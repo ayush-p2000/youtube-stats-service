@@ -64,7 +64,17 @@ interface EarningsData {
         weekly: number;
         monthly: number;
     };
-    history: {
+    history_7d: {
+        date: string;
+        earnings: number;
+        views: number;
+    }[];
+    history_30d: {
+        date: string;
+        earnings: number;
+        views: number;
+    }[];
+    history_1y: {
         date: string;
         earnings: number;
         views: number;

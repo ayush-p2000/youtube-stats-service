@@ -45,17 +45,17 @@ export default function TopicExtraction() {
       <style jsx global>{borderBeamAnimation}</style>
 
       {/* Header Section */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative">
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="p-4 bg-cyan-500/10 rounded-2xl text-cyan-600 dark:text-cyan-500 border border-cyan-500/20 shadow-xl shadow-cyan-500/10 backdrop-blur-md">
-            <Tag sx={{ fontSize: 28 }} />
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 relative">
+        <div className="flex items-center gap-4 sm:gap-5 relative z-10 max-w-full">
+          <div className="p-3 sm:p-5 bg-amber-500/10 rounded-3xl sm:rounded-4xl text-amber-600 dark:text-amber-500 border border-amber-500/20 shadow-2xl shadow-amber-500/10 backdrop-blur-md shrink-0">
+            <Tag className="text-2xl sm:text-4xl" />
           </div>
-          <div>
-            <h3 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tighter flex items-center gap-3">
-              Conversation <span className="text-cyan-600 dark:text-cyan-500 drop-shadow-[0_0_15px_rgba(6,182,212,0.3)]">Clusters</span>
+          <div className="min-w-0">
+            <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tighter flex flex-wrap items-center gap-x-3 gap-y-1">
+              Topic <span className="text-amber-600 dark:text-amber-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]">Extraction</span>
             </h3>
-            <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[10px] tracking-[0.4em] mt-1 flex items-center gap-2">
-              Keyword Extraction <span className="w-8 h-px bg-gray-200 dark:bg-white/10" /> Semantic Map
+            <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
+              Semantic Clustering <span className="hidden sm:block w-8 h-px bg-zinc-800 dark:bg-white/10" /> Keyword Density
             </p>
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function TopicExtraction() {
         <Paper
           elevation={0}
           sx={{ bgcolor: 'transparent' }}
-          className="p-10 border border-gray-200/50 dark:border-white/10 bg-white/70 dark:bg-zinc-950/40 backdrop-blur-3xl rounded-[3rem] shadow-2xl ring-1 ring-inset ring-black/5 dark:ring-white/5 relative overflow-hidden"
+          className="p-6 sm:p-10 border border-gray-200/50 dark:border-white/10 bg-white/70 dark:bg-zinc-950/40 backdrop-blur-3xl rounded-[2rem] sm:rounded-[3rem] shadow-2xl ring-1 ring-inset ring-black/5 dark:ring-white/5 relative overflow-hidden"
         >
           {/* Border Beam */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">

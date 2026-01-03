@@ -5,13 +5,13 @@
 @variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
+  --background: #ffffff6b;
   --foreground: #171717;
 }
 
 .dark {
-  --background: #0f0f0f;
-  --foreground: #ffffff;
+  --background: #0f0f0f97;
+  --foreground: #ffffff18;
 }
 
 @theme inline {

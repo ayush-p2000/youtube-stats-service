@@ -62,11 +62,11 @@ export default function UrlInput() {
     return (
         <div className="w-full">
             <div className="flex flex-col gap-4">
-                <div className={`relative flex gap-3 items-center p-1 rounded-xl bg-white dark:bg-gray-800 border-2 transition-all duration-300 ${isFocused
-                        ? 'border-red-500 dark:border-red-600 shadow-lg shadow-red-500/10'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                <div className={`relative flex flex-col sm:flex-row gap-3 items-stretch sm:items-center p-2 sm:p-1 rounded-2xl sm:rounded-xl bg-white dark:bg-gray-800 border-2 transition-all duration-300 ${isFocused
+                    ? 'border-red-500 dark:border-red-600 shadow-lg shadow-red-500/10'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                     } ${error ? 'border-red-500 dark:border-red-600' : ''}`}>
-                    <div className="pl-4 pr-2">
+                    <div className="pl-2 sm:pl-4 pr-2 hidden sm:block">
                         <Search className={`h-5 w-5 transition-colors duration-300 ${isFocused ? 'text-red-500' : 'text-gray-400'
                             }`} />
                     </div>
@@ -83,8 +83,8 @@ export default function UrlInput() {
                     <button
                         onClick={handleAnalyze}
                         disabled={statsLoading || !inputUrl.trim()}
-                        className="px-5 py-2.5 bg-red-600 hover:bg-red-700 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-none flex items-center gap-2 min-w-[110px] justify-center self-stretch"
-                        style={{ alignSelf: 'stretch', marginRight: 2, marginLeft: 2, marginTop: 2, marginBottom: 2 }}
+                        className="px-5 py-3 sm:py-2.5 bg-red-600 hover:bg-red-700 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl sm:rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-none flex items-center gap-2 min-w-[110px] justify-center w-full sm:w-auto mt-1 sm:mt-0"
+                        style={{ marginRight: 2, marginLeft: 2, marginBottom: 2 }}
                     >
                         {statsLoading ? (
                             <>
