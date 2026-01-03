@@ -12,11 +12,11 @@ export default function LoadingOverlay() {
     if (!isLoading) return null
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 dark:bg-[#0f0f0f]/80 backdrop-blur-lg animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-white/60 dark:bg-[#0f0f0f]/80 backdrop-blur-lg animate-in fade-in duration-300">
             <div className="flex flex-col items-center gap-8 p-10 sm:p-12 rounded-2xl bg-white dark:bg-[#181818] shadow-2xl border border-gray-200/50 dark:border-gray-800/50 scale-95 animate-in zoom-in duration-500 max-w-md mx-4">
                 <div className="relative">
                     <div className="absolute inset-0 bg-red-500/30 rounded-full blur-2xl animate-pulse" />
-                    <div className="relative bg-gradient-to-br from-red-600 to-red-700 p-6 rounded-2xl shadow-xl">
+                    <div className="relative bg-linear-to-br from-red-600 to-red-700 p-6 rounded-2xl shadow-xl">
                         <div className="relative">
                             <PlayArrow className="h-12 w-12 text-white" />
                             <div className="absolute inset-0 flex items-center justify-center">

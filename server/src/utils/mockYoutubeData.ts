@@ -54,3 +54,48 @@ export const MOCK_COMMENTS_RESPONSE = {
     items: generateMockComments(1000),
     nextPageToken: null
 };
+
+export const MOCK_EARNINGS_DATA = {
+    estimated_cpm: 4.52,
+    estimated_rpm: 3.15,
+    total_earnings: 1245.67,
+    forecast: {
+        daily: 12.45,
+        weekly: 87.15,
+        monthly: 373.50
+    },
+    history: [
+        { date: "2023-12-01", earnings: 10.5, views: 3500 },
+        { date: "2023-12-02", earnings: 12.2, views: 4100 },
+        { date: "2023-12-03", earnings: 9.8, views: 3200 },
+        { date: "2023-12-04", earnings: 11.5, views: 3800 },
+        { date: "2023-12-05", earnings: 14.2, views: 4700 },
+        { date: "2023-12-06", earnings: 13.1, views: 4300 },
+        { date: "2023-12-07", earnings: 12.5, views: 4150 },
+        { date: "2023-12-08", earnings: 15.6, views: 5200 },
+        { date: "2023-12-09", earnings: 18.2, views: 6000 },
+        { date: "2023-12-10", earnings: 16.5, views: 5500 },
+        { date: "2023-12-11", earnings: 14.8, views: 4900 },
+        { date: "2023-12-12", earnings: 13.2, views: 4400 },
+        { date: "2023-12-13", earnings: 12.1, views: 4000 },
+        { date: "2023-12-14", earnings: 11.4, views: 3800 },
+        { date: "2023-12-15", earnings: 10.9, views: 3600 },
+        { date: "2023-12-16", earnings: 13.5, views: 4500 },
+        { date: "2023-12-17", earnings: 15.2, views: 5100 },
+        { date: "2023-12-18", earnings: 17.8, views: 5900 },
+        { date: "2023-12-19", earnings: 19.5, views: 6500 },
+        { date: "2023-12-20", earnings: 21.2, views: 7000 },
+        { date: "2023-12-21", earnings: 20.5, views: 6800 },
+        { date: "2023-12-22", earnings: 18.9, views: 6300 },
+        { date: "2023-12-23", earnings: 17.4, views: 5800 },
+        { date: "2023-12-24", earnings: 15.8, views: 5200 },
+        { date: "2023-12-25", earnings: 14.5, views: 4800 },
+        { date: "2023-12-26", earnings: 16.7, views: 5600 },
+        { date: "2023-12-27", earnings: 18.9, views: 6300 },
+        { date: "2023-12-28", earnings: 20.2, views: 6700 },
+        { date: "2023-12-29", earnings: 22.5, views: 7500 },
+        { date: "2023-12-30", earnings: 25.1, views: 8200 }
+    ],
+    currency: "USD",
+    confidence_score: 92
+};

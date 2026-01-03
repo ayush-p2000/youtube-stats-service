@@ -3,16 +3,16 @@ import { Analytics, TrendingUp, Psychology } from '@mui/icons-material';
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] p-6 sm:p-8 pb-20 gap-12 sm:gap-16 bg-gradient-to-br from-white via-gray-50 to-white dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] transition-all duration-500">
-      <main className="flex flex-col gap-10 sm:gap-12 items-center w-full max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 mb-4">
-            <Analytics className="h-4 w-4 text-red-600 dark:text-red-400" />
-            <span className="text-sm font-semibold text-red-600 dark:text-red-400">Professional Analytics Platform</span>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] p-4 sm:p-8 pb-20 gap-10 sm:gap-16 bg-linear-to-br from-white via-gray-50 to-white dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] transition-all duration-500">
+      <main className="flex flex-col gap-8 sm:gap-12 items-center w-full max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="text-center space-y-4 sm:space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 mb-2 sm:mb-4">
+            <Analytics className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-600 dark:text-red-400" />
+            <span className="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400">Professional Analytics Platform</span>
           </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-gray-900 dark:text-white tracking-tight leading-[1.1]">
             Analyze Any{' '}
-            <span className="bg-gradient-to-r from-red-600 via-red-500 to-orange-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-red-600 via-red-500 to-orange-500 bg-clip-text text-transparent">
               YouTube Video
             </span>
           </h1>
@@ -21,9 +21,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="w-full max-w-3xl">
-          <UrlInput />
-        </div>
+        <UrlInput />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mt-4">
           <div className="group p-6 rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 hover:border-red-300 dark:hover:border-red-800/50 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">

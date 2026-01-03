@@ -13,6 +13,7 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -29,10 +30,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning={true}
+      suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
-      <head>
+      <head suppressHydrationWarning>
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -40,17 +41,9 @@ export default function RootLayout({
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
-        <style>{`
-          :root {
-            --footer-height: 140px;
-          }
-          body {
-            padding-bottom: calc(var(--footer-height) + 1rem);
-          }
-        `}</style>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen pt-16 sm:pt-20 transition-colors duration-300 text-gray-900 dark:text-gray-100 bg-[#f5f6fa] dark:bg-[#181a20]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen transition-colors duration-300 text-gray-900 dark:text-gray-100 bg-[#f5f6fa] dark:bg-[#181a20]`}
       >
         <Providers>
           <Navbar />

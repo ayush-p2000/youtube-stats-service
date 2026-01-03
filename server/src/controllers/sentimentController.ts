@@ -5,8 +5,9 @@ import { generateMockComments } from '../utils/mockYoutubeData.js';
 
 export const analyzeSentiment = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { videoId } = req.body;
-        const apiKey = process.env.YOUTUBE_API_KEY;
+        const { videoId, apiKey: requestApiKey } = req.body;
+        const apiKey = requestApiKey || process.env.YOUTUBE_API_KEY;
+        console.log('apiKey', apiKey)
 
         if (!videoId) {
             res.status(400).json({ status: 'error', message: 'Video ID is required' });
@@ -14,8 +15,12 @@ export const analyzeSentiment = async (req: Request, res: Response, next: NextFu
         }
 
         if (!apiKey) {
-            res.status(500).json({ status: 'error', message: 'YouTube API key is missing' });
-            return;
+            if (process.env.USE_MOCK_DATA === 'true') {
+                // proceed with mock
+            } else {
+                res.status(400).json({ status: 'error', message: 'API Key Required' });
+                return;
+            }
         }
 
         // Mock data logic

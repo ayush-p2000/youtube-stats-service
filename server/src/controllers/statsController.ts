@@ -6,16 +6,32 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
     try {
         const { videoId } = req.params;
         const pageToken = req.query.pageToken as string | undefined;
-        const apiKey = process.env.YOUTUBE_API_KEY;
+        // Check for API key in query (common for GET) or fallback to env
+        let apiKey = (req.query.apiKey as string) || process.env.YOUTUBE_API_KEY;
+        console.log('apiKey', apiKey)
 
-        if (!apiKey) {
-            res.status(500).json({ status: 'error', message: 'YouTube API key not configured' });
+        if (!videoId) {
+            res.status(400).json({ status: 'error', message: 'Could not parse Video ID' });
             return;
         }
 
-        if (!videoId) {
-            res.status(400).json({ status: 'error', message: 'Video ID is required' });
-            return;
+        if (!apiKey) {
+            // Check if we can proceed with limited functionality or just mock
+            if (process.env.USE_MOCK_DATA === 'true') {
+                apiKey = 'MOCK';
+            } else {
+                // Return 200 OK but with 'limited' status to trigger Download Only mode on frontend
+                res.status(200).json({
+                    status: 'limited',
+                    message: 'API Key Required for full stats',
+                    data: {
+                        stats: null,
+                        comments: [],
+                        videoId
+                    }
+                });
+                return;
+            }
         }
 
         // Mock data logic
@@ -28,14 +44,16 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
             videoData = MOCK_VIDEO_STATS;
             commentsResponse = pageToken ? { items: [], nextPageToken: null } : MOCK_COMMENTS_RESPONSE;
         } else {
-            // Only fetch video stats if it's the first page (no token)
             const videoDataPromise = pageToken ? Promise.resolve(null) : youtubeService.getVideoStats(videoId, apiKey);
-            const commentsPromise = youtubeService.getVideoComments(videoId, apiKey, pageToken);
-
-            [videoData, commentsResponse] = await Promise.all([
-                videoDataPromise,
-                commentsPromise
-            ]);
+            let commentsPromise: Promise<any>;
+            commentsPromise = youtubeService.getVideoComments(videoId, apiKey, pageToken).catch((err: any) => {
+                const msg = typeof err?.response?.data?.error?.message === 'string' ? err.response.data.error.message : '';
+                if (err?.response?.status === 403 && msg.toLowerCase().includes('disabled comments')) {
+                    return { items: [], nextPageToken: undefined };
+                }
+                throw err;
+            });
+            [videoData, commentsResponse] = await Promise.all([videoDataPromise, commentsPromise]);
         }
 
         let stats = null;

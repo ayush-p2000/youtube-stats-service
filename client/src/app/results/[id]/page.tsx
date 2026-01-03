@@ -1,124 +1,237 @@
+
 "use client";
 
 import { useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  fetchVideoStats,
-  setIsNavigating,
-  resetVideoState,
-  analyzeSentiment,
-  predictMetrics,
-} from "@/lib/features/videoSlice";
+import { setIsNavigating } from "@/lib/features/videoSlice";
 import SentimentAnalysis from "@/components/SentimentAnalysis";
 import TopicExtraction from "@/components/TopicExtraction";
 import PredictiveInsights from "@/components/PredictiveInsights";
+import EarningsDisplay from "@/components/EarningsDisplay";
 import StatsDisplay from "@/components/StatsDisplay";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { IconButton } from "@mui/material";
+import { Download } from "@mui/icons-material";
+import { useVideoDownload } from "@/lib/downloadHooks";
+import { fetchVideoStatsIfNeeded } from "@/lib/features/DownloadActions";
+import VideoDownloadDialog from "@/components/downloadDialogBox";
 
 export default function ResultsPage() {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { videoId, stats, error } = useAppSelector((state) => state.video);
+  const { videoId, stats, statsLoading, error, url } = useAppSelector((state) => state.video);
 
-  // Track if this is initial mount (page reload) vs navigation
-  const isInitialMount = useRef(true);
   const fetchedVideoIdRef = useRef<string | null>(null);
 
+  // Reconstruct URL from videoId if url is missing (e.g., on page reload)
+  const videoUrl = url || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : null);
+
+  // Use the download hook
+  const {
+    open,
+    filteredFormats,
+    filteredQualities,
+    filteredBitrates,
+    selectedFormat,
+    selectedQuality,
+    selectedBitrate,
+    selectedFormatId,
+    loadingExts,
+    downloading,
+    downloadError,
+    setSelectedFormat,
+    setSelectedQuality,
+    setSelectedBitrate,
+    handleOpenDownload,
+    handleDownload,
+    handleCloseDialog,
+    progress,
+    progressStage,
+  } = useVideoDownload({ videoUrl, videoTitle: stats?.title });
+
   const handleBack = () => {
-    // Set navigating state to show loading overlay during navigation
-    // The home page will reset the state when it mounts
     dispatch(setIsNavigating(true));
   };
 
   useEffect(() => {
     if (id && typeof id === "string") {
-      // Split only from the last '-' to get the video ID
-      const lastDashIndex = id.lastIndexOf("-");
-      const actualVideoId = lastDashIndex !== -1 ? id.substring(0, lastDashIndex) : id;
-      const alreadyFetched = fetchedVideoIdRef.current === actualVideoId;
-      const hasStats = stats && videoId === actualVideoId;
-
-      // Only fetch if:
-      // 1. This is initial mount (page reload) AND
-      // 2. We don't have stats AND
-      // 3. We haven't already fetched this video ID
-      if (isInitialMount.current && !hasStats && !alreadyFetched) {
-        fetchedVideoIdRef.current = actualVideoId;
-        dispatch(fetchVideoStats({ videoId: actualVideoId })).catch((error) => {
-          if (process.env.NODE_ENV === "development") {
-            console.error("Error fetching video stats:", error);
-          }
-        });
-      }
-
-      // Mark as no longer initial mount after first render
-      isInitialMount.current = false;
+      fetchVideoStatsIfNeeded({
+        dispatch,
+        id,
+        videoId,
+        stats,
+        statsLoading,
+        fetchedVideoIdRef,
+      });
     }
-  }, [id, videoId, stats, dispatch]);
+  }, [id, videoId, stats, statsLoading, dispatch]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] py-8 sm:py-12 transition-colors duration-300">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <Link
-          href="/"
-          onClick={handleBack}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 font-semibold group"
-          onMouseEnter={(e) => {
-            const icon = e.currentTarget.querySelector('i');
-            if (icon) {
-              (icon as HTMLElement).style.transform = 'translateX(-8px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            const icon = e.currentTarget.querySelector('i');
-            if (icon) {
-              (icon as HTMLElement).style.transform = 'translateX(0)';
-            }
-          }}
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] py-8 sm:py-12 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.4 }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-12"
         >
-          <i 
-            className="fa-solid fa-arrow-left" 
-            style={{ 
-              transition: 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              display: 'inline-block',
-              transform: 'translateX(0)'
-            }}
-          ></i>
-          <span>Back to Search</span>
-        </Link>
-        <div className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-white/60 dark:bg-[#181818]/60 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-gray-200/50 dark:border-gray-800/50">
-          ID: {id}
-        </div>
-      </div>
+          <Link
+            href="/"
+            onClick={handleBack}
+            className="group relative flex items-center gap-4 px-6 py-3 bg-white/40 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-2xl transition-all duration-1000 shadow-sm hover:shadow-2xl hover:-translate-y-1"
+          >
+            <div className="absolute inset-0 bg-linear-to-r from-red-500/0 via-red-500/5 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl" />
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 group-hover:bg-red-600 group-hover:text-white group-hover:rotate-[-10deg] transition-all duration-500 shadow-inner">
+              <i className="fa-solid fa-arrow-left text-sm transition-transform duration-500 group-hover:-translate-x-1.5" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-0.5 group-hover:text-red-500/70 transition-colors duration-300">
+                Navigation
+              </span>
+              <span className="text-sm font-black text-gray-700 dark:text-zinc-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300 uppercase tracking-widest">
+                Back to Search
+              </span>
+            </div>
+          </Link>
 
-      {error && (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
-          <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30 p-6 sm:p-8 rounded-2xl shadow-lg">
-            <h2 className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
-              Analysis Failed
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base">
-              {error}
-            </p>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              Try Another URL
-            </Link>
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex flex-col items-end px-6 border-r-2 border-gray-200/50 dark:border-white/10">
+              <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-[0.3em] mb-1">Matrix Node</span>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                <span className="text-[11px] font-mono font-bold text-gray-600 dark:text-zinc-400 tracking-tighter">{id}</span>
+              </div>
+            </div>
+
+            {/* Show error context if stats are missing but we are essentially valid */}
+            {!stats && !statsLoading && videoId && (
+              <div className="hidden md:flex flex-col items-end px-4 border-r-2 border-gray-200/50 dark:border-white/10 mr-4">
+                <span className="text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Limited Mode</span>
+              </div>
+            )}
+
+            {/* Hide top download button in Limited Mode (since we show a big one below) */}
+            {!(videoId && !stats && !statsLoading) && (
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-linear-to-r from-red-600 to-rose-600 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-500 group-hover:duration-200 animate-pulse" />
+                <IconButton
+                  aria-label="Download video"
+                  onClick={handleOpenDownload}
+                  className="relative w-14 h-14 bg-red-600! hover:bg-red-700! hover:scale-110 active:scale-90 text-white! rounded-2xl! shadow-2xl shadow-red-600/40 transition-all duration-1000 border border-white/20"
+                >
+                  <Download sx={{ fontSize: 26 }} className="group-hover:animate-bounce" />
+                </IconButton>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        </motion.div>
 
-      {!error && stats && (
-        <>
-          <StatsDisplay />
-          <SentimentAnalysis />
-          <TopicExtraction />
-          <PredictiveInsights />
-        </>
-      )}
+        {/* Main Content */}
+        {error && !videoId && (
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
+            <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30 p-6 sm:p-8 rounded-2xl shadow-lg">
+              <h2 className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
+                Analysis Failed
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base">
+                {error}
+              </p>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+              >
+                Try Another URL
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Download Only Mode (Valid Video ID but Stats Failed/Missing) */}
+        {videoId && (!stats || error) && (
+          <div className="flex flex-col items-center justify-center min-h-[50vh] animate-in fade-in duration-700">
+            <div className="p-8 sm:p-12 bg-white/50 dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-3xl shadow-2xl flex flex-col items-center gap-8 text-center max-w-2xl w-full mx-4">
+              <div className="flex flex-col gap-2">
+                <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight">
+                  Ready to Download
+                </h2>
+                <p className="text-gray-500 dark:text-zinc-400 text-lg">
+                  Analytics unavailable, but you can still download this video.
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-100 dark:bg-zinc-800/50 rounded-xl w-full break-all border border-gray-200 dark:border-white/5">
+                <p className="text-xs font-mono text-gray-400 dark:text-zinc-500 mb-1 uppercase tracking-wider">Video Source</p>
+                <p className="text-sm sm:text-base font-medium text-blue-600 dark:text-blue-400">
+                  {videoUrl}
+                </p>
+              </div>
+
+              <div className="flex flex-col w-full gap-4">
+                <button
+                  onClick={handleOpenDownload}
+                  className="w-full py-5 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-xl transition-all duration-300 shadow-xl shadow-red-600/20 hover:shadow-red-600/40 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3"
+                >
+                  <Download sx={{ fontSize: 32 }} />
+                  Download Video
+                </button>
+              </div>
+            </div>
+
+            <VideoDownloadDialog
+              open={open}
+              filteredFormats={filteredFormats}
+              filteredQualities={filteredQualities}
+              filteredBitrates={filteredBitrates}
+              selectedFormat={selectedFormat}
+              selectedQuality={selectedQuality}
+              selectedBitrate={selectedBitrate}
+              selectedFormatId={selectedFormatId}
+              loadingExts={loadingExts}
+              downloading={downloading}
+              downloadError={downloadError}
+              onClose={handleCloseDialog}
+              onFormatChange={setSelectedFormat}
+              onQualityChange={setSelectedQuality}
+              onBitrateChange={setSelectedBitrate}
+              onDownload={handleDownload}
+              progress={progress}
+              progressStage={progressStage}
+            />
+          </div>
+        )}
+
+        {!error && stats && (
+          <>
+            <StatsDisplay />
+            <SentimentAnalysis />
+            <TopicExtraction />
+            <PredictiveInsights />
+            <EarningsDisplay />
+            <VideoDownloadDialog
+              open={open}
+              filteredFormats={filteredFormats}
+              filteredQualities={filteredQualities}
+              filteredBitrates={filteredBitrates}
+              selectedFormat={selectedFormat}
+              selectedQuality={selectedQuality}
+              selectedBitrate={selectedBitrate}
+              selectedFormatId={selectedFormatId}
+              loadingExts={loadingExts}
+              downloading={downloading}
+              downloadError={downloadError}
+              onClose={handleCloseDialog}
+              onFormatChange={setSelectedFormat}
+              onQualityChange={setSelectedQuality}
+              onBitrateChange={setSelectedBitrate}
+              onDownload={handleDownload}
+              progress={progress}
+              progressStage={progressStage}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 }

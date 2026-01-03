@@ -1,0 +1,188 @@
+{
+	"info": {
+		"name": "YouTube Stats Service API",
+		"description": "API collection for testing YouTube video download and formats endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/health",
+					"host": ["{{base_url}}"],
+					"path": ["api", "health"]
+				}
+			}
+		},
+		{
+			"name": "Get Available Formats",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"{{test_video_url}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/formats",
+					"host": ["{{base_url}}"],
+					"path": ["api", "formats"]
+				}
+			}
+		},
+		{
+			"name": "Download - Format ID Only",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"{{test_video_url}}\",\n    \"format_id\": \"{{format_id_1080p}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/download",
+					"host": ["{{base_url}}"],
+					"path": ["api", "download"]
+				}
+			}
+		},
+		{
+			"name": "Download - Format Only",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"{{test_video_url}}\",\n    \"format\": \"mp4\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/download",
+					"host": ["{{base_url}}"],
+					"path": ["api", "download"]
+				}
+			}
+		},
+		{
+			"name": "Download - Format + Quality",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"{{test_video_url}}\",\n    \"format\": \"mp4\",\n    \"quality\": \"1080p\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/download",
+					"host": ["{{base_url}}"],
+					"path": ["api", "download"]
+				}
+			}
+		},
+		{
+			"name": "Download - Format + Quality + Bitrate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"{{test_video_url}}\",\n    \"format\": \"mp4\",\n    \"quality\": \"1080p\",\n    \"bitrate\": \"378 kbps\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/download",
+					"host": ["{{base_url}}"],
+					"path": ["api", "download"]
+				}
+			}
+		},
+		{
+			"name": "Download - All Parameters (format_id priority)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"{{test_video_url}}\",\n    \"format_id\": \"{{format_id_1080p}}\",\n    \"format\": \"webm\",\n    \"quality\": \"144p\",\n    \"bitrate\": \"57 kbps\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/download",
+					"host": ["{{base_url}}"],
+					"path": ["api", "download"]
+				}
+			}
+		},
+		{
+			"name": "Parse URL",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"{{test_video_url}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/parse-url",
+					"host": ["{{base_url}}"],
+					"path": ["api", "parse-url"]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "test_video_url",
+			"value": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+			"type": "string"
+		},
+		{
+			"key": "format_id_1080p",
+			"value": "399",
+			"type": "string"
+		}
+	]
+}
+
+
+

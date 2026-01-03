@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
 
 // Define a type for the slice state
-interface VideoStats {
+export interface VideoStats {
     title: string;
     viewCount: string;
     likeCount: string;
@@ -9,7 +9,7 @@ interface VideoStats {
     publishedAt: string;
 }
 
-interface Comment {
+export interface Comment {
     id: string;
     text: string;
     author: string;
@@ -17,7 +17,7 @@ interface Comment {
     publishedAt: string;
 }
 
-interface SentimentData {
+export interface SentimentData {
     positive: number;
     negative: number;
     neutral: number;
@@ -55,6 +55,34 @@ interface PredictionData {
     }[];
 }
 
+interface EarningsData {
+    estimated_cpm: number;
+    estimated_rpm: number;
+    total_earnings: number;
+    forecast: {
+        daily: number;
+        weekly: number;
+        monthly: number;
+    };
+    history_7d: {
+        date: string;
+        earnings: number;
+        views: number;
+    }[];
+    history_30d: {
+        date: string;
+        earnings: number;
+        views: number;
+    }[];
+    history_1y: {
+        date: string;
+        earnings: number;
+        views: number;
+    }[];
+    currency: string;
+    confidence_score: number;
+}
+
 interface VideoState {
     url: string;
     videoId: string | null;
@@ -63,12 +91,15 @@ interface VideoState {
     comments: Comment[];
     sentiment: SentimentData | null;
     prediction: PredictionData | null;
+    earnings: EarningsData | null;
     nextPageToken: string | null;
     statsLoading: boolean;
     sentimentLoading: boolean;
     predictionLoading: boolean;
+    earningsLoading: boolean;
     isNavigating: boolean;
     error: string | null;
+    apiKey: string | null;
 }
 
 const initialState: VideoState = {
@@ -79,12 +110,15 @@ const initialState: VideoState = {
     comments: [],
     sentiment: null,
     prediction: null,
+    earnings: null,
     nextPageToken: null,
     statsLoading: false,
     sentimentLoading: false,
     predictionLoading: false,
+    earningsLoading: false,
     isNavigating: false,
     error: null,
+    apiKey: null,
 }
 
 // Async thunk to parse the URL via backend
@@ -118,18 +152,37 @@ export const parseVideoUrl = createAsyncThunk(
 // Async thunk to fetch video stats and comments
 export const fetchVideoStats = createAsyncThunk(
     'video/fetchStats',
-    async ({ videoId, pageToken }: { videoId: string; pageToken?: string }, { rejectWithValue }) => {
+    async ({ videoId, pageToken, apiKey }: { videoId: string; pageToken?: string; apiKey?: string }, { rejectWithValue, getState }) => {
         try {
+            const state = getState() as { video: VideoState };
+            const usedApiKey = apiKey || state.video.apiKey;
+
             const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
-            const url = pageToken
+            let url = pageToken
                 ? `${serverUrl}/api/stats/${videoId}?pageToken=${pageToken}`
                 : `${serverUrl}/api/stats/${videoId}`;
+
+            if (usedApiKey) {
+                // Determine if we already have query params
+                const separator = url.includes('?') ? '&' : '?';
+                url += `${separator}apiKey=${encodeURIComponent(usedApiKey)}`;
+            }
 
             const response = await fetch(url);
             const data = await response.json();
 
             if (!response.ok) {
                 return rejectWithValue(data.message || 'Failed to fetch video statistics');
+            }
+
+            // Handle limited mode (valid video, but no API key)
+            if (data.status === 'limited') {
+                return {
+                    stats: null,
+                    comments: [],
+                    isAppend: false,
+                    videoId: data.data.videoId // Ensure videoId is passed
+                };
             }
 
             return {
@@ -146,15 +199,18 @@ export const fetchVideoStats = createAsyncThunk(
 // Async thunk to perform sentiment analysis
 export const analyzeSentiment = createAsyncThunk(
     'video/analyzeSentiment',
-    async (videoId: string, { rejectWithValue }) => {
+    async (videoId: string, { rejectWithValue, getState }) => {
         try {
+            const state = getState() as { video: VideoState };
+            const apiKey = state.video.apiKey;
+
             const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
             const response = await fetch(`${serverUrl}/api/analyze-sentiment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ videoId }),
+                body: JSON.stringify({ videoId, apiKey }),
             });
 
             const data = await response.json();
@@ -174,21 +230,55 @@ export const analyzeSentiment = createAsyncThunk(
 // Async thunk for predictive analytics
 export const predictMetrics = createAsyncThunk(
     'video/predictMetrics',
-    async ({ videoId, stats, sentiment, comments }: { videoId: string; stats: VideoStats; sentiment?: SentimentData; comments?: Comment[] }, { rejectWithValue }) => {
+    async ({ videoId, stats, sentiment, comments }: { videoId: string; stats: VideoStats; sentiment?: SentimentData; comments?: Comment[] }, { rejectWithValue, getState }) => {
         try {
+            const state = getState() as { video: VideoState };
+            const apiKey = state.video.apiKey;
+
             const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
             const response = await fetch(`${serverUrl}/api/predict/${videoId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ stats, sentiment, comments }),
+                body: JSON.stringify({ stats, sentiment, comments, apiKey }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
                 return rejectWithValue(data.message || 'Failed to generate predictions');
+            }
+
+            return data.data;
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Network error';
+            return rejectWithValue(errorMessage);
+        }
+    }
+);
+
+// Async thunk for earnings prediction
+export const fetchEarnings = createAsyncThunk(
+    'video/fetchEarnings',
+    async ({ videoId, stats, sentiment, comments }: { videoId: string; stats: VideoStats; sentiment?: SentimentData; comments?: Comment[] }, { rejectWithValue, getState }) => {
+        try {
+            const state = getState() as { video: VideoState };
+            const apiKey = state.video.apiKey;
+
+            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
+            const response = await fetch(`${serverUrl}/api/earnings/${videoId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ stats, sentiment, comments, apiKey }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                return rejectWithValue(data.message || 'Failed to fetch earnings prediction');
             }
 
             return data.data;
@@ -206,6 +296,9 @@ export const videoSlice = createSlice({
         setVideoUrl: (state, action: PayloadAction<string>) => {
             state.url = action.payload
         },
+        setApiKey: (state, action: PayloadAction<string | null>) => {
+            state.apiKey = action.payload;
+        },
         setRedirectId: (state, action: PayloadAction<string | null>) => { // Added setRedirectId reducer
             state.redirectId = action.payload;
         },
@@ -217,10 +310,12 @@ export const videoSlice = createSlice({
             state.comments = [];
             state.sentiment = null;
             state.prediction = null;
+            state.earnings = null;
             state.nextPageToken = null;
             state.statsLoading = false;
             state.sentimentLoading = false;
             state.predictionLoading = false;
+            state.earningsLoading = false;
             state.isNavigating = false;
             state.error = null;
         },
@@ -243,6 +338,7 @@ export const videoSlice = createSlice({
                 state.comments = [];
                 state.sentiment = null;
                 state.prediction = null;
+                state.earnings = null;
                 state.nextPageToken = null;
             })
             .addCase(parseVideoUrl.fulfilled, (state, action) => {
@@ -274,6 +370,9 @@ export const videoSlice = createSlice({
                 // Only update stats if they were returned (first page)
                 if (action.payload.stats) {
                     state.stats = action.payload.stats;
+                } else if (action.payload.stats === null && !action.payload.isAppend) {
+                    // Explicitly clear stats if limited mode and not appending
+                    state.stats = null;
                 }
 
                 if (action.payload.isAppend) {
@@ -319,10 +418,25 @@ export const videoSlice = createSlice({
                 state.predictionLoading = false;
                 if (action.meta.aborted) return;
                 state.error = action.payload as string;
+            })
+            // fetchEarnings cases
+            .addCase(fetchEarnings.pending, (state) => {
+                state.earningsLoading = true;
+                state.error = null;
+            })
+            .addCase(fetchEarnings.fulfilled, (state, action) => {
+                state.earningsLoading = false;
+                if (state.videoId === null) return;
+                state.earnings = action.payload;
+            })
+            .addCase(fetchEarnings.rejected, (state, action) => {
+                state.earningsLoading = false;
+                if (action.meta.aborted) return;
+                state.error = action.payload as string;
             });
     },
 })
 
-export const { setVideoUrl, setRedirectId, resetVideoState, clearRedirectId, setIsNavigating } = videoSlice.actions
+export const { setVideoUrl, setApiKey, setRedirectId, resetVideoState, clearRedirectId, setIsNavigating } = videoSlice.actions
 
 export default videoSlice.reducer
