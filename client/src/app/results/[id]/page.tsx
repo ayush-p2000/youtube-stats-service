@@ -22,7 +22,7 @@ export default function ResultsPage() {
   const { videoId, stats, statsLoading, error, url } = useAppSelector((state) => state.video);
 
   const fetchedVideoIdRef = useRef<string | null>(null);
-  
+
   // Reconstruct URL from videoId if url is missing (e.g., on page reload)
   const videoUrl = url || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : null);
 
@@ -95,7 +95,7 @@ export default function ResultsPage() {
             aria-label="Download video"
             onClick={handleOpenDownload}
             color="primary"
-            className="!bg-red-600 hover:!bg-red-700 !text-white !rounded-lg"
+            className="bg-red-600! hover:bg-red-700! text-white! rounded-lg!"
           >
             <Download />
           </IconButton>

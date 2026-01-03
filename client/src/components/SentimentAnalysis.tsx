@@ -33,11 +33,6 @@ export default function SentimentAnalysis() {
     }
   };
 
-  // Calculate rotation for the meter needle
-  // average_polarity is between -1 and 1
-  // We want to map -1 to -90deg (Negative) and 1 to +90deg (Positive)
-  const needleRotation = sentiment ? sentiment.average_polarity * 90 : 0;
-
   const getSentimentLabel = (polarity: number) => {
     if (polarity > 0.2)
       return { text: "Very Positive", color: "text-green-600" };
@@ -301,13 +296,12 @@ export default function SentimentAnalysis() {
 
               <div className="flex items-center gap-4 mb-4">
                 <div
-                  className={`text-4xl font-black ${
-                    sentiment.spam_count > sentiment.total * 0.1
-                      ? "text-red-500"
-                      : sentiment.spam_count > 0
+                  className={`text-4xl font-black ${sentiment.spam_count > sentiment.total * 0.1
+                    ? "text-red-500"
+                    : sentiment.spam_count > 0
                       ? "text-amber-500"
                       : "text-green-500"
-                  }`}
+                    }`}
                 >
                   {sentiment.spam_count}
                 </div>
@@ -355,11 +349,10 @@ export default function SentimentAnalysis() {
 
               <div className="flex items-center gap-4 mb-4">
                 <div
-                  className={`text-4xl font-black ${
-                    sentiment.sarcasm_detected > sentiment.total * 0.15
-                      ? "text-indigo-500"
-                      : "text-gray-400"
-                  }`}
+                  className={`text-4xl font-black ${sentiment.sarcasm_detected > sentiment.total * 0.15
+                    ? "text-indigo-500"
+                    : "text-gray-400"
+                    }`}
                 >
                   {sentiment.sarcasm_detected}
                 </div>

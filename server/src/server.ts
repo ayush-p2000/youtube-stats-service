@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import router from './routes/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { spawnSync } from 'node:child_process';
 
 dotenv.config();
 
@@ -45,5 +46,10 @@ app.listen(PORT, () => {
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     if (process.env.USE_MOCK_DATA === 'true') {
         console.log('Using MOCK_DATA mode');
+    }
+    const ffmpegCheck = spawnSync('ffmpeg', ['-version'], { encoding: 'utf-8' });
+    const ffprobeCheck = spawnSync('ffprobe', ['-version'], { encoding: 'utf-8' });
+    if (ffmpegCheck.status !== 0 || ffprobeCheck.status !== 0) {
+        console.warn('ffmpeg/ffprobe not detected in PATH. High-resolution merging may be unavailable.');
     }
 });
