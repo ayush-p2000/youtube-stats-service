@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import ytDlp from 'yt-dlp-exec';
+import { runYtDlpWithProgress } from './ytDlpUtils.js';
 
 interface MergeOptions {
     videoPath: string;
@@ -16,7 +17,7 @@ interface MergeOptions {
  */
 export const checkFFmpeg = (): boolean => {
     try {
-        const result = spawnSync('ffmpeg', ['-version'], { 
+        const result = spawnSync('ffmpeg', ['-version'], {
             encoding: 'utf-8',
             stdio: 'pipe'
         });
@@ -91,7 +92,7 @@ export const mergeVideoAudio = (options: MergeOptions): Promise<void> => {
                 const seconds = parseInt(timeMatch[3]);
                 const centiseconds = parseInt(timeMatch[4]);
                 currentTime = hours * 3600 + minutes * 60 + seconds + centiseconds / 100;
-                
+
                 if (onProgress && duration > 0) {
                     const progress = Math.min(100, Math.round((currentTime / duration) * 100));
                     onProgress(progress);
@@ -175,13 +176,14 @@ const downloadFormat = async (
     onProgress?: (progress: number) => void
 ): Promise<void> => {
     try {
-        await ytDlp(url, {
+        await runYtDlpWithProgress(url, {
             format: formatId,
             output: outputPath,
             noPart: true,
             quiet: true,
             noPlaylist: true,
-        } as any);
+            progress: true,
+        }, onProgress);
     } catch (err: any) {
         throw new Error(`Failed to download format ${formatId}: ${err.message}`);
     }
@@ -196,13 +198,14 @@ const downloadBestAudio = async (
     onProgress?: (progress: number) => void
 ): Promise<void> => {
     try {
-        await ytDlp(url, {
+        await runYtDlpWithProgress(url, {
             format: 'bestaudio[ext=m4a]/bestaudio/best',
             output: outputPath,
             noPart: true,
             quiet: true,
             noPlaylist: true,
-        } as any);
+            progress: true,
+        }, onProgress);
     } catch (err: any) {
         throw new Error(`Failed to download audio: ${err.message}`);
     }

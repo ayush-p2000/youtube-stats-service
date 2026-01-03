@@ -1,11 +1,11 @@
 import { AppDispatch } from "@/lib/store";
-import { fetchVideoStats } from "@/lib/features/videoSlice";
+import { fetchVideoStats, VideoStats } from "@/lib/features/videoSlice";
 
 interface FetchVideoStatsIfNeededParams {
   dispatch: AppDispatch;
   id: string;
   videoId: string | null;
-  stats: any;
+  stats: VideoStats | null;
   statsLoading: boolean;
   fetchedVideoIdRef: React.MutableRefObject<string | null>;
 }
@@ -27,13 +27,13 @@ export async function fetchVideoStatsIfNeeded({
   // Extract the actual video ID from the URL parameter
   const lastDashIndex = id.lastIndexOf("-");
   const actualVideoId = lastDashIndex !== -1 ? id.substring(0, lastDashIndex) : id;
-  
+
   // Check if we've already attempted to fetch this video ID
   const alreadyFetched = fetchedVideoIdRef.current === actualVideoId;
-  
+
   // Check if we already have valid stats for this video
   const hasValidStats = stats && videoId === actualVideoId;
-  
+
   // Check if stats are currently being loaded for this video
   const isLoadingStats = statsLoading && videoId === actualVideoId;
 
@@ -43,7 +43,7 @@ export async function fetchVideoStatsIfNeeded({
   // 3. We haven't already fetched this ID in this session
   if (!hasValidStats && !isLoadingStats && !alreadyFetched) {
     fetchedVideoIdRef.current = actualVideoId;
-    
+
     try {
       await dispatch(fetchVideoStats({ videoId: actualVideoId })).unwrap();
     } catch (error) {

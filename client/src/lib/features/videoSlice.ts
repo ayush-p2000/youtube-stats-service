@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
 
 // Define a type for the slice state
-interface VideoStats {
+export interface VideoStats {
     title: string;
     viewCount: string;
     likeCount: string;
@@ -9,7 +9,7 @@ interface VideoStats {
     publishedAt: string;
 }
 
-interface Comment {
+export interface Comment {
     id: string;
     text: string;
     author: string;
@@ -17,7 +17,7 @@ interface Comment {
     publishedAt: string;
 }
 
-interface SentimentData {
+export interface SentimentData {
     positive: number;
     negative: number;
     neutral: number;
@@ -55,6 +55,24 @@ interface PredictionData {
     }[];
 }
 
+interface EarningsData {
+    estimated_cpm: number;
+    estimated_rpm: number;
+    total_earnings: number;
+    forecast: {
+        daily: number;
+        weekly: number;
+        monthly: number;
+    };
+    history: {
+        date: string;
+        earnings: number;
+        views: number;
+    }[];
+    currency: string;
+    confidence_score: number;
+}
+
 interface VideoState {
     url: string;
     videoId: string | null;
@@ -63,10 +81,12 @@ interface VideoState {
     comments: Comment[];
     sentiment: SentimentData | null;
     prediction: PredictionData | null;
+    earnings: EarningsData | null;
     nextPageToken: string | null;
     statsLoading: boolean;
     sentimentLoading: boolean;
     predictionLoading: boolean;
+    earningsLoading: boolean;
     isNavigating: boolean;
     error: string | null;
 }
@@ -79,10 +99,12 @@ const initialState: VideoState = {
     comments: [],
     sentiment: null,
     prediction: null,
+    earnings: null,
     nextPageToken: null,
     statsLoading: false,
     sentimentLoading: false,
     predictionLoading: false,
+    earningsLoading: false,
     isNavigating: false,
     error: null,
 }
@@ -199,6 +221,34 @@ export const predictMetrics = createAsyncThunk(
     }
 );
 
+// Async thunk for earnings prediction
+export const fetchEarnings = createAsyncThunk(
+    'video/fetchEarnings',
+    async ({ videoId, stats, sentiment, comments }: { videoId: string; stats: VideoStats; sentiment?: SentimentData; comments?: Comment[] }, { rejectWithValue }) => {
+        try {
+            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
+            const response = await fetch(`${serverUrl}/api/earnings/${videoId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ stats, sentiment, comments }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                return rejectWithValue(data.message || 'Failed to fetch earnings prediction');
+            }
+
+            return data.data;
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Network error';
+            return rejectWithValue(errorMessage);
+        }
+    }
+);
+
 export const videoSlice = createSlice({
     name: 'video',
     initialState,
@@ -217,10 +267,12 @@ export const videoSlice = createSlice({
             state.comments = [];
             state.sentiment = null;
             state.prediction = null;
+            state.earnings = null;
             state.nextPageToken = null;
             state.statsLoading = false;
             state.sentimentLoading = false;
             state.predictionLoading = false;
+            state.earningsLoading = false;
             state.isNavigating = false;
             state.error = null;
         },
@@ -243,6 +295,7 @@ export const videoSlice = createSlice({
                 state.comments = [];
                 state.sentiment = null;
                 state.prediction = null;
+                state.earnings = null;
                 state.nextPageToken = null;
             })
             .addCase(parseVideoUrl.fulfilled, (state, action) => {
@@ -317,6 +370,21 @@ export const videoSlice = createSlice({
             })
             .addCase(predictMetrics.rejected, (state, action) => {
                 state.predictionLoading = false;
+                if (action.meta.aborted) return;
+                state.error = action.payload as string;
+            })
+            // fetchEarnings cases
+            .addCase(fetchEarnings.pending, (state) => {
+                state.earningsLoading = true;
+                state.error = null;
+            })
+            .addCase(fetchEarnings.fulfilled, (state, action) => {
+                state.earningsLoading = false;
+                if (state.videoId === null) return;
+                state.earnings = action.payload;
+            })
+            .addCase(fetchEarnings.rejected, (state, action) => {
+                state.earningsLoading = false;
                 if (action.meta.aborted) return;
                 state.error = action.payload as string;
             });
