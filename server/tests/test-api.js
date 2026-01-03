@@ -1,24 +1,24 @@
 // Using built-in fetch (Node.js 18+)
 
-const SERVER_URL = process.env.SERVER_URL || 'http://localhost:5000';
+const NEXT_PUBLIC_SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
 const TEST_VIDEO_URL = process.env.TEST_VIDEO_URL || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'; // Rick Roll as test video
 
 async function testFormatsAPI() {
     console.log('🧪 Testing Formats API...\n');
-    console.log(`Server URL: ${SERVER_URL}`);
+    console.log(`Server URL: ${NEXT_PUBLIC_SERVER_URL}`);
     console.log(`Test Video URL: ${TEST_VIDEO_URL}\n`);
 
     try {
         // Test 1: Health check
         console.log('📋 Test 1: Health Check');
-        const healthResponse = await fetch(`${SERVER_URL}/api/health`);
+        const healthResponse = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/health`);
         const healthData = await healthResponse.json();
         console.log('✅ Health Check:', healthData);
         console.log('');
 
         // Test 2: Formats endpoint
         console.log('📋 Test 2: Get Available Formats');
-        const formatsResponse = await fetch(`${SERVER_URL}/api/formats`, {
+        const formatsResponse = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/formats`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

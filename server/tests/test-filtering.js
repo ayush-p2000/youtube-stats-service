@@ -1,6 +1,6 @@
 // Test filtering logic with specific scenario: MP4, 1080p, 378 kbps
 
-const SERVER_URL = process.env.SERVER_URL || 'http://localhost:5000';
+const NEXT_PUBLIC_SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
 const TEST_VIDEO_URL = process.env.TEST_VIDEO_URL || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
 // Simulate the frontend filtering logic
@@ -49,7 +49,7 @@ async function testFiltering() {
 
     try {
         // Get formats
-        const formatsResponse = await fetch(`${SERVER_URL}/api/formats`, {
+        const formatsResponse = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/formats`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: TEST_VIDEO_URL }),
@@ -108,7 +108,7 @@ async function testFiltering() {
             console.log('📋 Step 4: Test Download with Selected Format ID');
             console.log(`   Using format_id: ${selectedFormatId}`);
             
-            const downloadResponse = await fetch(`${SERVER_URL}/api/download`, {
+            const downloadResponse = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/download`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
