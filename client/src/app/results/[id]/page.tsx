@@ -29,12 +29,19 @@ export default function ResultsPage() {
   // Use the download hook
   const {
     open,
-    exts,
-    selectedExt,
+    filteredFormats,
+    filteredQualities,
+    filteredBitrates,
+    selectedFormat,
+    selectedQuality,
+    selectedBitrate,
+    selectedFormatId,
     loadingExts,
     downloading,
     downloadError,
-    setSelectedExt,
+    setSelectedFormat,
+    setSelectedQuality,
+    setSelectedBitrate,
     handleOpenDownload,
     handleDownload,
     handleCloseDialog,
@@ -129,13 +136,20 @@ export default function ResultsPage() {
           <PredictiveInsights />
           <VideoDownloadDialog
             open={open}
-            exts={exts}
-            selectedExt={selectedExt}
+            filteredFormats={filteredFormats}
+            filteredQualities={filteredQualities}
+            filteredBitrates={filteredBitrates}
+            selectedFormat={selectedFormat}
+            selectedQuality={selectedQuality}
+            selectedBitrate={selectedBitrate}
+            selectedFormatId={selectedFormatId}
             loadingExts={loadingExts}
             downloading={downloading}
             downloadError={downloadError}
             onClose={handleCloseDialog}
-            onExtChange={setSelectedExt}
+            onFormatChange={setSelectedFormat}
+            onQualityChange={setSelectedQuality}
+            onBitrateChange={setSelectedBitrate}
             onDownload={handleDownload}
           />
         </>

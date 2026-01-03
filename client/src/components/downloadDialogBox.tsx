@@ -1,27 +1,41 @@
-import { Dialog, DialogContent, RadioGroup, FormControlLabel, Radio, CircularProgress, Button } from "@mui/material";
+import { Dialog, DialogContent, CircularProgress, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography } from "@mui/material";
 import { Download, Sparkles, CheckCircle2, AlertCircle } from "lucide-react";
 
 interface VideoDownloadDialogProps {
   open: boolean;
-  exts: string[];
-  selectedExt: string;
+  filteredFormats: string[];
+  filteredQualities: string[];
+  filteredBitrates: string[];
+  selectedFormat: string;
+  selectedQuality: string;
+  selectedBitrate: string;
+  selectedFormatId: string | null;
   loadingExts: boolean;
   downloading: boolean;
   downloadError: string | null;
   onClose: () => void;
-  onExtChange: (ext: string) => void;
+  onFormatChange: (format: string) => void;
+  onQualityChange: (quality: string) => void;
+  onBitrateChange: (bitrate: string) => void;
   onDownload: () => void;
 }
 
 export default function VideoDownloadDialog({
   open,
-  exts,
-  selectedExt,
+  filteredFormats,
+  filteredQualities,
+  filteredBitrates,
+  selectedFormat,
+  selectedQuality,
+  selectedBitrate,
+  selectedFormatId,
   loadingExts,
   downloading,
   downloadError,
   onClose,
-  onExtChange,
+  onFormatChange,
+  onQualityChange,
+  onBitrateChange,
   onDownload,
 }: VideoDownloadDialogProps) {
   return (
@@ -83,7 +97,7 @@ export default function VideoDownloadDialog({
             <p className="text-gray-300 font-medium">Scanning formats...</p>
             <p className="text-sm text-gray-500">Please wait</p>
           </div>
-        ) : exts.length === 0 ? (
+        ) : filteredFormats.length === 0 && filteredQualities.length === 0 && filteredBitrates.length === 0 ? (
           <div className="py-12 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500/10 rounded-full mb-4">
               <AlertCircle className="w-8 h-8 text-red-400" />
@@ -94,62 +108,161 @@ export default function VideoDownloadDialog({
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
-            <RadioGroup
-              value={selectedExt}
-              onChange={(e) => onExtChange((e.target as HTMLInputElement).value)}
-            >
-              {exts.map((ext) => (
-                <label
-                  key={ext}
-                  className={`relative flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-300 group ${selectedExt === ext
-                    ? 'bg-linear-gradient-to-r from-red-500/20 to-red-600/20 border-2 border-red-500/50'
-                    : 'bg-white/5 border-2 border-white/5 hover:bg-white/10 hover:border-white/10'
-                    }`}
-                >
-                  {selectedExt === ext && (
-                    <div className="absolute inset-0 bg-linear-gradient-to-r from-red-500/10 to-transparent rounded-xl animate-pulse" />
-                  )}
-
-                  <FormControlLabel
-                    value={ext}
-                    control={
-                      <Radio
-                        sx={{
-                          color: 'rgba(255, 255, 255, 0.3)',
-                          '&.Mui-checked': {
-                            color: '#dc2626',
-                          },
-                        }}
-                      />
-                    }
-                    label=""
-                    className="m-0"
-                  />
-
-                  <div className="flex items-center justify-between flex-1">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg font-bold text-white uppercase tracking-wider">
-                        {ext}
-                      </span>
-                      {ext === "mp4" && (
-                        <div className="flex items-center gap-1.5 px-3 py-1 bg-linear-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-full">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
+          <div className="space-y-6">
+            <Typography variant="body2" className="text-gray-400 text-sm mb-4">
+              Select your preferred format, quality, and bitrate. Options will automatically filter based on your selections.
+            </Typography>
+            
+            {/* Format Selection */}
+            <FormControl fullWidth className="bg-white/5 rounded-xl">
+              <InputLabel 
+                id="format-select-label" 
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  '&.Mui-focused': { color: '#dc2626' }
+                }}
+              >
+                Format
+              </InputLabel>
+              <Select
+                labelId="format-select-label"
+                value={selectedFormat || ''}
+                onChange={(e) => onFormatChange(e.target.value)}
+                label="Format"
+                disabled={downloading}
+                sx={{
+                  color: 'white',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#dc2626',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                }}
+              >
+                {filteredFormats.map((format) => (
+                  <MenuItem key={format} value={format}>
+                    <Box className="flex items-center gap-3 w-full">
+                      <span className="text-white font-semibold uppercase">{format}</span>
+                      {format === "mp4" && (
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-linear-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-full">
+                          <CheckCircle2 className="w-3 h-3 text-green-400" />
                           <span className="text-xs font-semibold text-green-400">Recommended</span>
                         </div>
                       )}
-                    </div>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-                    {selectedExt === ext && (
-                      <div className="flex items-center gap-2 text-red-400">
-                        <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-                        <span className="text-sm font-medium">Selected</span>
-                      </div>
-                    )}
-                  </div>
-                </label>
-              ))}
-            </RadioGroup>
+            {/* Quality Selection */}
+            <FormControl fullWidth className="bg-white/5 rounded-xl">
+              <InputLabel 
+                id="quality-select-label"
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  '&.Mui-focused': { color: '#dc2626' }
+                }}
+              >
+                Quality
+              </InputLabel>
+              <Select
+                labelId="quality-select-label"
+                value={selectedQuality || ''}
+                onChange={(e) => onQualityChange(e.target.value)}
+                label="Quality"
+                disabled={downloading || filteredQualities.length === 0}
+                sx={{
+                  color: 'white',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#dc2626',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                }}
+              >
+                {filteredQualities.map((quality) => (
+                  <MenuItem key={quality} value={quality}>
+                    <span className="text-white font-semibold">{quality}</span>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* Bitrate Selection */}
+            <FormControl fullWidth className="bg-white/5 rounded-xl">
+              <InputLabel 
+                id="bitrate-select-label"
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  '&.Mui-focused': { color: '#dc2626' }
+                }}
+              >
+                Bitrate
+              </InputLabel>
+              <Select
+                labelId="bitrate-select-label"
+                value={selectedBitrate || ''}
+                onChange={(e) => onBitrateChange(e.target.value)}
+                label="Bitrate"
+                disabled={downloading || filteredBitrates.length === 0}
+                sx={{
+                  color: 'white',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#dc2626',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                }}
+              >
+                {filteredBitrates.map((bitrate) => (
+                  <MenuItem key={bitrate} value={bitrate}>
+                    <span className="text-white font-semibold">{bitrate}</span>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* Selection Summary */}
+            {(selectedFormat || selectedQuality || selectedBitrate) && (
+              <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+                <Typography variant="body2" className="text-red-400 font-semibold mb-2">
+                  Selected Configuration:
+                </Typography>
+                <div className="flex flex-wrap gap-2 text-sm text-gray-300">
+                  {selectedFormat && (
+                    <span className="px-3 py-1 bg-white/5 rounded-lg">Format: {selectedFormat.toUpperCase()}</span>
+                  )}
+                  {selectedQuality && (
+                    <span className="px-3 py-1 bg-white/5 rounded-lg">Quality: {selectedQuality}</span>
+                  )}
+                  {selectedBitrate && (
+                    <span className="px-3 py-1 bg-white/5 rounded-lg">Bitrate: {selectedBitrate}</span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -196,7 +309,7 @@ export default function VideoDownloadDialog({
 
           <Button
             onClick={onDownload}
-            disabled={downloading || loadingExts || exts.length === 0}
+            disabled={downloading || loadingExts || !selectedFormatId}
             fullWidth
             sx={{
               py: 1.5,
@@ -241,7 +354,7 @@ export default function VideoDownloadDialog({
             ) : (
               <div className="flex items-center gap-2">
                 <Download className="w-5 h-5" />
-                <span>Download {selectedExt.toUpperCase()}</span>
+                <span>Download {selectedFormat ? selectedFormat.toUpperCase() : 'Video'}</span>
               </div>
             )}
           </Button>
