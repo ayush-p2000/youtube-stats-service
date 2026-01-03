@@ -105,21 +105,31 @@ export default function ResultsPage() {
               </div>
             </div>
 
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-linear-to-r from-red-600 to-rose-600 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-500 group-hover:duration-200 animate-pulse" />
-              <IconButton
-                aria-label="Download video"
-                onClick={handleOpenDownload}
-                className="relative w-14 h-14 bg-red-600! hover:bg-red-700! hover:scale-110 active:scale-90 text-white! rounded-2xl! shadow-2xl shadow-red-600/40 transition-all duration-1000 border border-white/20"
-              >
-                <Download sx={{ fontSize: 26 }} className="group-hover:animate-bounce" />
-              </IconButton>
-            </div>
+            {/* Show error context if stats are missing but we are essentially valid */}
+            {!stats && !statsLoading && videoId && (
+              <div className="hidden md:flex flex-col items-end px-4 border-r-2 border-gray-200/50 dark:border-white/10 mr-4">
+                <span className="text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Limited Mode</span>
+              </div>
+            )}
+
+            {/* Hide top download button in Limited Mode (since we show a big one below) */}
+            {!(videoId && !stats && !statsLoading) && (
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-linear-to-r from-red-600 to-rose-600 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-500 group-hover:duration-200 animate-pulse" />
+                <IconButton
+                  aria-label="Download video"
+                  onClick={handleOpenDownload}
+                  className="relative w-14 h-14 bg-red-600! hover:bg-red-700! hover:scale-110 active:scale-90 text-white! rounded-2xl! shadow-2xl shadow-red-600/40 transition-all duration-1000 border border-white/20"
+                >
+                  <Download sx={{ fontSize: 26 }} className="group-hover:animate-bounce" />
+                </IconButton>
+              </div>
+            )}
           </div>
         </motion.div>
 
         {/* Main Content */}
-        {error && (
+        {error && !videoId && (
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
             <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30 p-6 sm:p-8 rounded-2xl shadow-lg">
               <h2 className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
@@ -135,6 +145,60 @@ export default function ResultsPage() {
                 Try Another URL
               </Link>
             </div>
+          </div>
+        )}
+
+        {/* Download Only Mode (Valid Video ID but Stats Failed/Missing) */}
+        {videoId && (!stats || error) && (
+          <div className="flex flex-col items-center justify-center min-h-[50vh] animate-in fade-in duration-700">
+            <div className="p-8 sm:p-12 bg-white/50 dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-3xl shadow-2xl flex flex-col items-center gap-8 text-center max-w-2xl w-full mx-4">
+              <div className="flex flex-col gap-2">
+                <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight">
+                  Ready to Download
+                </h2>
+                <p className="text-gray-500 dark:text-zinc-400 text-lg">
+                  Analytics unavailable, but you can still download this video.
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-100 dark:bg-zinc-800/50 rounded-xl w-full break-all border border-gray-200 dark:border-white/5">
+                <p className="text-xs font-mono text-gray-400 dark:text-zinc-500 mb-1 uppercase tracking-wider">Video Source</p>
+                <p className="text-sm sm:text-base font-medium text-blue-600 dark:text-blue-400">
+                  {videoUrl}
+                </p>
+              </div>
+
+              <div className="flex flex-col w-full gap-4">
+                <button
+                  onClick={handleOpenDownload}
+                  className="w-full py-5 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-xl transition-all duration-300 shadow-xl shadow-red-600/20 hover:shadow-red-600/40 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3"
+                >
+                  <Download sx={{ fontSize: 32 }} />
+                  Download Video
+                </button>
+              </div>
+            </div>
+
+            <VideoDownloadDialog
+              open={open}
+              filteredFormats={filteredFormats}
+              filteredQualities={filteredQualities}
+              filteredBitrates={filteredBitrates}
+              selectedFormat={selectedFormat}
+              selectedQuality={selectedQuality}
+              selectedBitrate={selectedBitrate}
+              selectedFormatId={selectedFormatId}
+              loadingExts={loadingExts}
+              downloading={downloading}
+              downloadError={downloadError}
+              onClose={handleCloseDialog}
+              onFormatChange={setSelectedFormat}
+              onQualityChange={setSelectedQuality}
+              onBitrateChange={setSelectedBitrate}
+              onDownload={handleDownload}
+              progress={progress}
+              progressStage={progressStage}
+            />
           </div>
         )}
 

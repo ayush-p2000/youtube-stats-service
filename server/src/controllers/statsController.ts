@@ -6,16 +6,32 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
     try {
         const { videoId } = req.params;
         const pageToken = req.query.pageToken as string | undefined;
-        const apiKey = process.env.YOUTUBE_API_KEY;
+        // Check for API key in query (common for GET) or fallback to env
+        let apiKey = (req.query.apiKey as string) || process.env.YOUTUBE_API_KEY;
+        console.log('apiKey', apiKey)
 
-        if (!apiKey) {
-            res.status(500).json({ status: 'error', message: 'YouTube API key not configured' });
+        if (!videoId) {
+            res.status(400).json({ status: 'error', message: 'Could not parse Video ID' });
             return;
         }
 
-        if (!videoId) {
-            res.status(400).json({ status: 'error', message: 'Video ID is required' });
-            return;
+        if (!apiKey) {
+            // Check if we can proceed with limited functionality or just mock
+            if (process.env.USE_MOCK_DATA === 'true') {
+                apiKey = 'MOCK';
+            } else {
+                // Return 200 OK but with 'limited' status to trigger Download Only mode on frontend
+                res.status(200).json({
+                    status: 'limited',
+                    message: 'API Key Required for full stats',
+                    data: {
+                        stats: null,
+                        comments: [],
+                        videoId
+                    }
+                });
+                return;
+            }
         }
 
         // Mock data logic

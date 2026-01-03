@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { setVideoUrl, parseVideoUrl, clearRedirectId, resetVideoState, fetchVideoStats } from "@/lib/features/videoSlice";
+import { setVideoUrl, parseVideoUrl, clearRedirectId, resetVideoState, setApiKey } from "@/lib/features/videoSlice";
 import { useRouter } from "next/navigation";
 import { Search, PlayArrow, CheckCircle, ErrorOutline } from '@mui/icons-material';
 
 export default function UrlInput() {
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const { statsLoading, error, redirectId, videoId } = useAppSelector((state) => state.video);
+    const { statsLoading, error, redirectId, videoId, apiKey } = useAppSelector((state) => state.video);
     const [inputUrl, setInputUrl] = useState("");
     const [isFocused, setIsFocused] = useState(false);
+    const [showApiKey, setShowApiKey] = useState(false);
 
     useEffect(() => {
         // Reset state on mount to ensure a clean slate
@@ -42,14 +43,7 @@ export default function UrlInput() {
             }
 
             dispatch(setVideoUrl(cleanedUrl));
-            const parsedVideoId = await dispatch(parseVideoUrl(cleanedUrl)).unwrap();
-            if (parsedVideoId) {
-                dispatch(fetchVideoStats({ videoId: parsedVideoId })).catch((error) => {
-                    if (process.env.NODE_ENV === "development") {
-                        console.error("Error fetching video stats:", error);
-                    }
-                });
-            }
+            await dispatch(parseVideoUrl(cleanedUrl));
         }
     };
 
@@ -98,6 +92,32 @@ export default function UrlInput() {
                             </>
                         )}
                     </button>
+                </div>
+
+                {/* API Key Input (Collapsible) */}
+                <div className="flex flex-col gap-2 px-1">
+                    <button
+                        onClick={() => setShowApiKey(!showApiKey)}
+                        className="self-start flex items-center gap-1.5 text-xs font-bold text-gray-400 dark:text-zinc-600 hover:text-red-500 dark:hover:text-red-400 transition-colors uppercase tracking-wider"
+                    >
+                        {showApiKey ? <i className="fa-solid fa-chevron-up" /> : <i className="fa-solid fa-key" />}
+                        {showApiKey ? 'Hide API Key' : 'Have a YouTube Data API Key?'}
+                    </button>
+
+                    {showApiKey && (
+                        <div className="animate-in slide-in-from-top-2 duration-300">
+                            <input
+                                type="password"
+                                value={apiKey || ''}
+                                onChange={(e) => dispatch(setApiKey(e.target.value))}
+                                placeholder="Paste your API Key here (optional)"
+                                className="w-full sm:max-w-md px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-red-500 dark:focus:border-red-500 text-sm text-gray-600 dark:text-gray-300 placeholder-gray-400 focus:outline-none transition-all"
+                            />
+                            <p className="mt-1.5 text-[10px] text-gray-400 dark:text-zinc-600 ml-1">
+                                Using your own key ensures you don&apos;t run into shared quota limits.
+                            </p>
+                        </div>
+                    )}
                 </div>
 
                 {error && (
