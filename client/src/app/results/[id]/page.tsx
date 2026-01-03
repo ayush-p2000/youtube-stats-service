@@ -6,9 +6,6 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
   fetchVideoStats,
   setIsNavigating,
-  resetVideoState,
-  analyzeSentiment,
-  predictMetrics,
 } from "@/lib/features/videoSlice";
 import SentimentAnalysis from "@/components/SentimentAnalysis";
 import TopicExtraction from "@/components/TopicExtraction";
@@ -58,7 +55,7 @@ export default function ResultsPage() {
   }, [id, videoId, stats, dispatch]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] py-8 sm:py-12 transition-colors duration-300">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] py-8 sm:py-12 transition-colors duration-300">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Link
           href="/"
@@ -77,9 +74,9 @@ export default function ResultsPage() {
             }
           }}
         >
-          <i 
-            className="fa-solid fa-arrow-left" 
-            style={{ 
+          <i
+            className="fa-solid fa-arrow-left"
+            style={{
               transition: 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
               display: 'inline-block',
               transform: 'translateX(0)'

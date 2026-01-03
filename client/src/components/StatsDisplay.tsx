@@ -37,7 +37,7 @@ export default function StatsDisplay() {
         <div className="w-full max-w-6xl mx-auto p-4 sm:p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Main Stats Card */}
             <div className="relative bg-white dark:bg-[#181818] rounded-2xl shadow-lg overflow-hidden border border-gray-200/50 dark:border-gray-800/50 hover:shadow-xl transition-all duration-300">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-red-500 via-orange-500 to-yellow-500" />
                 <div className="p-6 sm:p-8 md:p-10">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 sm:mb-8 leading-tight tracking-tight">
                         {stats.title}

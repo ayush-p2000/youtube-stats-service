@@ -62,15 +62,13 @@ export default function UrlInput() {
     return (
         <div className="w-full">
             <div className="flex flex-col gap-4">
-                <div className={`relative flex gap-3 items-center p-1 rounded-xl bg-white dark:bg-gray-800 border-2 transition-all duration-300 ${
-                    isFocused 
-                        ? 'border-red-500 dark:border-red-600 shadow-lg shadow-red-500/10' 
+                <div className={`relative flex gap-3 items-center p-1 rounded-xl bg-white dark:bg-gray-800 border-2 transition-all duration-300 ${isFocused
+                        ? 'border-red-500 dark:border-red-600 shadow-lg shadow-red-500/10'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                } ${error ? 'border-red-500 dark:border-red-600' : ''}`}>
+                    } ${error ? 'border-red-500 dark:border-red-600' : ''}`}>
                     <div className="pl-4 pr-2">
-                        <Search className={`h-5 w-5 transition-colors duration-300 ${
-                            isFocused ? 'text-red-500' : 'text-gray-400'
-                        }`} />
+                        <Search className={`h-5 w-5 transition-colors duration-300 ${isFocused ? 'text-red-500' : 'text-gray-400'
+                            }`} />
                     </div>
                     <input
                         type="text"
@@ -104,14 +102,14 @@ export default function UrlInput() {
 
                 {error && (
                     <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 text-red-700 dark:text-red-300 rounded-xl animate-in slide-in-from-top-2 duration-300">
-                        <ErrorOutline className="h-5 w-5 flex-shrink-0" />
+                        <ErrorOutline className="h-5 w-5 shrink-0" />
                         <p className="text-sm font-medium">{error}</p>
                     </div>
                 )}
 
                 {videoId && !error && (
                     <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30 text-green-700 dark:text-green-300 rounded-xl animate-in slide-in-from-top-2 duration-300">
-                        <CheckCircle className="h-5 w-5 flex-shrink-0" />
+                        <CheckCircle className="h-5 w-5 shrink-0" />
                         <p className="text-sm font-medium">
                             Video ID Found: <span className="font-mono font-bold">{videoId}</span>
                         </p>

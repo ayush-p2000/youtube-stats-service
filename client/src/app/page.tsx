@@ -3,7 +3,7 @@ import { Analytics, TrendingUp, Psychology } from '@mui/icons-material';
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] p-6 sm:p-8 pb-20 gap-12 sm:gap-16 bg-gradient-to-br from-white via-gray-50 to-white dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] transition-all duration-500">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] p-6 sm:p-8 pb-20 gap-12 sm:gap-16 bg-linear-to-br from-white via-gray-50 to-white dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] transition-all duration-500">
       <main className="flex flex-col gap-10 sm:gap-12 items-center w-full max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 mb-4">
@@ -12,7 +12,7 @@ export default function Home() {
           </div>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight">
             Analyze Any{' '}
-            <span className="bg-gradient-to-r from-red-600 via-red-500 to-orange-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-red-600 via-red-500 to-orange-500 bg-clip-text text-transparent">
               YouTube Video
             </span>
           </h1>

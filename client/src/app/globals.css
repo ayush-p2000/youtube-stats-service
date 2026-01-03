@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
 @import "tailwindcss";
 
+:root {
+  --footer-height: 140px;
+}
+
+body {
+  padding-bottom: calc(var(--footer-height) + 1rem);
+}
+
 @variant dark (&:where(.dark, .dark *));
 
 :root {
@@ -66,9 +74,17 @@ html {
 }
 
 @keyframes footer-gradient-move {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .animate-footer-gradient {
@@ -78,9 +94,17 @@ html {
 
 /* Rainbow gradient animation for footer */
 @keyframes rainbow-move {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .animate-rainbow-gradient {
