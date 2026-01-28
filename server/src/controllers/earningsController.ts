@@ -7,7 +7,6 @@ export const getEarningsPrediction = async (req: Request, res: Response, next: N
         const { videoId } = req.params;
         const { stats, sentiment, comments, apiKey: requestApiKey } = req.body;
         const apiKey = requestApiKey || process.env.YOUTUBE_API_KEY;
-        console.log('apiKey', apiKey)
 
         if (!videoId) {
             res.status(400).json({ status: 'error', message: 'Video ID is required' });

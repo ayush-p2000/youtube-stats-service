@@ -8,7 +8,6 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
         const pageToken = req.query.pageToken as string | undefined;
         // Check for API key in query (common for GET) or fallback to env
         let apiKey = (req.query.apiKey as string) || process.env.YOUTUBE_API_KEY;
-        console.log('apiKey', apiKey)
 
         if (!videoId) {
             res.status(400).json({ status: 'error', message: 'Could not parse Video ID' });

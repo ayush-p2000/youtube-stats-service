@@ -7,7 +7,6 @@ export const analyzeSentiment = async (req: Request, res: Response, next: NextFu
     try {
         const { videoId, apiKey: requestApiKey } = req.body;
         const apiKey = requestApiKey || process.env.YOUTUBE_API_KEY;
-        console.log('apiKey', apiKey)
 
         if (!videoId) {
             res.status(400).json({ status: 'error', message: 'Video ID is required' });
