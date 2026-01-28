@@ -233,25 +233,63 @@ const processDownload = async (jobId: string, params: DownloadRequest) => {
                 // Single stream download (already contains audio or no FFmpeg)
                 downloadJobStore.updateJob(jobId, { stage: 'Starting download...', progress: 30 });
                 let lastProgress = 30;
-                await runYtDlpWithProgress(canonicalUrl, {
-                    format: preferredFormatId || fmtSelector,
-                    output: tmpPath,
-                    noPart: true,
-                    noPlaylist: true,
-                    progress: true,
-                }, (downloadPercent) => {
-                    // Map 0-100% download to 30-95% overall progress
-                    const mappedProgress = Math.round(30 + (downloadPercent * 0.65));
 
-                    // Update if progress changed or at major intervals
-                    if (mappedProgress > lastProgress) {
-                        lastProgress = mappedProgress;
-                        downloadJobStore.updateJob(jobId, {
-                            stage: `Downloading: ${Math.round(downloadPercent)}%`,
-                            progress: Math.min(95, mappedProgress)
-                        });
+                const runWithFormat = async (formatSelector: string, isFallback = false) => {
+                    await runYtDlpWithProgress(
+                        canonicalUrl,
+                        {
+                            format: formatSelector,
+                            output: tmpPath,
+                            noPart: true,
+                            noPlaylist: true,
+                            progress: true,
+                        },
+                        (downloadPercent) => {
+                            // Map 0-100% download to 30-95% overall progress
+                            const mappedProgress = Math.round(30 + downloadPercent * 0.65);
+
+                            if (mappedProgress > lastProgress) {
+                                lastProgress = mappedProgress;
+                                downloadJobStore.updateJob(jobId, {
+                                    stage: `${isFallback ? 'Fallback downloading' : 'Downloading'}: ${Math.round(downloadPercent)}%`,
+                                    progress: Math.min(95, mappedProgress),
+                                });
+                            }
+                        }
+                    );
+                };
+
+                try {
+                    // First attempt: strict user-selected format / format_id
+                    await runWithFormat(preferredFormatId || fmtSelector);
+                } catch (primaryErr: any) {
+                    const msg = String(primaryErr?.message || primaryErr || '');
+                    const sabrOrForbidden = /SABR streaming|missing a url|HTTP Error 403|HTTP Error 401/i.test(msg);
+
+                    // If YouTube blocks this exact format (SABR/403/etc), try a more tolerant fallback
+                    if (sabrOrForbidden) {
+                        console.warn(`Primary format ${preferredFormatId || fmtSelector} blocked by YouTube, falling back.`, msg);
+
+                        // Build a safer fallback selector:
+                        // - Use bestvideo within requested height/ext when possible
+                        // - Merge with bestaudio
+                        let fallbackSelector: string;
+                        const heightNum = preferredQuality ? preferredQuality.replace('p', '') : '';
+                        const fallbackExt = preferredExt || 'mp4';
+
+                        if (heightNum) {
+                            fallbackSelector = `bestvideo[height<=${heightNum}][ext=${fallbackExt}]+bestaudio/best[ext=${fallbackExt}]/best`;
+                        } else {
+                            fallbackSelector = `bestvideo[ext=${fallbackExt}]+bestaudio/best[ext=${fallbackExt}]/best`;
+                        }
+
+                        // Try fallback; if this also fails, let it bubble to outer catch so user sees a clear error
+                        await runWithFormat(fallbackSelector, true);
+                    } else {
+                        // Different kind of error, rethrow to be handled by outer catch
+                        throw primaryErr;
                     }
-                });
+                }
             }
 
             downloadJobStore.updateJob(jobId, {

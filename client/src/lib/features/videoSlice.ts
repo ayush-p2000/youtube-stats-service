@@ -340,6 +340,8 @@ export const videoSlice = createSlice({
                 state.prediction = null;
                 state.earnings = null;
                 state.nextPageToken = null;
+                // Mark that we're navigating from landing to results
+                state.isNavigating = true;
             })
             .addCase(parseVideoUrl.fulfilled, (state, action) => {
                 state.statsLoading = false;
@@ -360,6 +362,8 @@ export const videoSlice = createSlice({
             })
             .addCase(fetchVideoStats.fulfilled, (state, action) => {
                 state.statsLoading = false;
+                // Navigation + initial stats load finished
+                state.isNavigating = false;
 
                 // Only ignore if we're already tracking a DIFFERENT video
                 // (This prevents stale responses from overwriting current data)
@@ -385,6 +389,7 @@ export const videoSlice = createSlice({
             })
             .addCase(fetchVideoStats.rejected, (state, action) => {
                 state.statsLoading = false;
+                state.isNavigating = false;
                 if (action.meta.aborted) return;
                 state.error = action.payload as string;
             })

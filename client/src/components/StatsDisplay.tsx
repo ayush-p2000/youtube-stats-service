@@ -100,7 +100,10 @@ const StatBox: React.FC<StatBoxProps> = ({ title, value, icon: Icon, color, subt
                     <Typography className="text-gray-500 dark:text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mb-1.5 opacity-80">
                         {title}
                     </Typography>
-                    <Typography variant="h4" className="text-gray-900 dark:text-white font-black tracking-tighter tabular-nums">
+                    <Typography
+                        component="p"
+                        className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 dark:text-white font-black tracking-tighter tabular-nums break-words text-right"
+                    >
                         {value}
                     </Typography>
                 </div>
@@ -201,7 +204,7 @@ export default function StatsDisplay() {
                 className="space-y-10 sm:space-y-16"
             >
                 {/* Core Engagement Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
                     <StatBox
                         title="Total Reach"
                         value={views.toLocaleString()}
@@ -238,7 +241,7 @@ export default function StatsDisplay() {
                         <span className="text-[10px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-[0.3em] hidden sm:block">AI Models Active</span>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
                         <StatBox
                             title="Likability Vector"
                             value={`${likabilityRatio.toFixed(2)}%`}
