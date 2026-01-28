@@ -41,15 +41,22 @@ app.use('/api', router);
 // Error handler must be last middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    if (process.env.USE_MOCK_DATA === 'true') {
-        console.log('Using MOCK_DATA mode');
-    }
-    const ffmpegCheck = spawnSync('ffmpeg', ['-version'], { encoding: 'utf-8' });
-    const ffprobeCheck = spawnSync('ffprobe', ['-version'], { encoding: 'utf-8' });
-    if (ffmpegCheck.status !== 0 || ffprobeCheck.status !== 0) {
-        console.warn('ffmpeg/ffprobe not detected in PATH. High-resolution merging may be unavailable.');
-    }
-});
+// In local/dev we start the HTTP listener as before.
+// In serverless environments like Vercel, we export the app and
+// let the platform handle the request lifecycle.
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+        console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        if (process.env.USE_MOCK_DATA === 'true') {
+            console.log('Using MOCK_DATA mode');
+        }
+        const ffmpegCheck = spawnSync('ffmpeg', ['-version'], { encoding: 'utf-8' });
+        const ffprobeCheck = spawnSync('ffprobe', ['-version'], { encoding: 'utf-8' });
+        if (ffmpegCheck.status !== 0 || ffprobeCheck.status !== 0) {
+            console.warn('ffmpeg/ffprobe not detected in PATH. High-resolution merging may be unavailable.');
+        }
+    });
+}
+
+export default app;
