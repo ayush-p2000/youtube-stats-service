@@ -84,7 +84,7 @@ const StatBox: React.FC<StatBoxProps> = ({ title, value, icon: Icon, color, subt
         <Paper
             elevation={0}
             sx={{ bgcolor: 'transparent' }}
-            className={`p-7 h-full border border-gray-200/50 dark:border-white/10 bg-white/70 dark:bg-zinc-950/40 backdrop-blur-2xl rounded-4xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500 ring-1 ring-inset ring-black/5 dark:ring-white/5 relative overflow-hidden ${colorMap[color].glow}`}
+            className={`p-7 h-full border border-gray-200/50 dark:border-white/10 bg-gray-100/70 dark:bg-zinc-950/40 backdrop-blur-2xl rounded-4xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500 ring-1 ring-inset ring-black/5 dark:ring-white/5 relative overflow-hidden ${colorMap[color].glow}`}
         >
             {/* Border Beam */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
@@ -267,7 +267,7 @@ export default function StatsDisplay() {
                 </div>
 
                 {/* Footer Matrix Status */}
-                <div className="p-8 border border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-zinc-950/20 backdrop-blur-xl rounded-[2.5rem] flex items-center justify-between ring-1 ring-inset ring-black/5 dark:ring-white/5">
+                <div className="p-8 border border-gray-200 dark:border-white/5 bg-gray-100 dark:bg-zinc-950/20 backdrop-blur-xl rounded-[2.5rem] flex items-center justify-between ring-1 ring-inset ring-black/5 dark:ring-white/5">
                     <div className="flex items-center gap-4">
                         <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                         <Typography className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[10px] tracking-[0.4em]">

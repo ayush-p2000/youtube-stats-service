@@ -25,12 +25,13 @@ interface VideoDownloadDialogProps {
   onDownload: () => void;
 }
 
-const MagnetButton = ({ children, onClick, disabled, className, variant = "primary" }: {
+const MagnetButton = ({ children, onClick, disabled, className, variant = "primary", isDark = true }: {
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
   className?: string;
   variant?: "primary" | "ghost";
+  isDark?: boolean;
 }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -84,10 +85,14 @@ const MagnetButton = ({ children, onClick, disabled, className, variant = "prima
               boxShadow: '0 12px 24px -4px rgba(220, 38, 38, 0.6)',
             }
           } : {
-            color: 'inherit',
-            bgcolor: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.05)',
-            '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+            color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)',
+            bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+            border: '1px solid',
+            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+            '&:hover': {
+              bgcolor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+              color: isDark ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.9)',
+            }
           }),
           '&:disabled': { opacity: 0.5, scale: 0.98 }
         }}
@@ -163,7 +168,7 @@ export default function VideoDownloadDialog({
             transition={{ type: "spring", damping: 20, stiffness: 200 }}
             className={`relative rounded-[40px] overflow-hidden border ${isDark ? 'border-white/10' : 'border-black/5'} shadow-2xl`}
             style={{
-              background: isDark ? 'rgba(15, 15, 15, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+              background: isDark ? 'rgba(15, 15, 15, 0.85)' : 'rgba(220, 220, 225, 0.92)',
               backdropFilter: 'blur(40px) saturate(180%)',
             }}
           >
@@ -505,7 +510,7 @@ export default function VideoDownloadDialog({
                       <MagnetButton
                         onClick={onClose}
                         variant="ghost"
-                        className={isDark ? 'text-gray-400' : 'text-gray-600'}
+                        isDark={isDark}
                       >
                         Abort Protocol
                       </MagnetButton>

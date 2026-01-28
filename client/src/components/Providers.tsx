@@ -14,7 +14,13 @@ export default function StoreProvider({
 
     return (
         <Provider store={store}>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange={false}
+                storageKey="youtube-stats-theme"
+            >
                 {children}
             </ThemeProvider>
         </Provider>

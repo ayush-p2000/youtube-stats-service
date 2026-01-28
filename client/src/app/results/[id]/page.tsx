@@ -69,7 +69,7 @@ export default function ResultsPage() {
   }, [id, videoId, stats, statsLoading, dispatch]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] py-8 sm:py-12 transition-colors duration-300">
+    <div className="min-h-screen bg-linear-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-[#0f0f0f] dark:via-[#181818] dark:to-[#0f0f0f] py-8 sm:py-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 sm:px-10">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -80,7 +80,7 @@ export default function ResultsPage() {
           <Link
             href="/"
             onClick={handleBack}
-            className="group relative flex items-center gap-4 px-6 py-3 bg-white/40 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-2xl transition-all duration-1000 shadow-sm hover:shadow-2xl hover:-translate-y-1"
+            className="group relative flex items-center gap-4 px-6 py-3 bg-gray-300/60 dark:bg-white/5 hover:bg-gray-300 dark:hover:bg-white/10 backdrop-blur-2xl border border-gray-300/50 dark:border-white/10 rounded-2xl transition-all duration-1000 shadow-sm hover:shadow-2xl hover:-translate-y-1"
           >
             <div className="absolute inset-0 bg-linear-to-r from-red-500/0 via-red-500/5 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl" />
             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 group-hover:bg-red-600 group-hover:text-white group-hover:rotate-[-10deg] transition-all duration-500 shadow-inner">
