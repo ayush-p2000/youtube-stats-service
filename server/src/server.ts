@@ -15,33 +15,44 @@ if (missingEnvVars.length > 0 && process.env.USE_MOCK_DATA !== 'true') {
     console.warn('Set USE_MOCK_DATA=true to use mock data, or provide valid API keys');
 }
 
-// Trust reverse proxy (needed for rate limiting and deployment behind proxies)
-const server = app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'undefined'}`);
-    if (process.env.USE_MOCK_DATA === 'true') {
-        console.log('Using MOCK_DATA mode');
-    }
-    const ffmpegCheck = spawnSync('ffmpeg', ['-version'], { encoding: 'utf-8' });
-    const ffprobeCheck = spawnSync('ffprobe', ['-version'], { encoding: 'utf-8' });
-    if (ffmpegCheck.status !== 0 || ffprobeCheck.status !== 0) {
-        console.warn('ffmpeg/ffprobe not detected in PATH. High-resolution merging may be unavailable.');
-    }
-});
-
-// Graceful shutdown
-const shutdown = (signal: string) => {
-    console.log(`Received ${signal}, shutting down gracefully...`);
-    server.close(() => {
-        console.log('HTTP server closed');
-        process.exit(0);
-    });
-    // Force exit if not closed within timeout
-    setTimeout(() => {
-        console.error('Force exiting after timeout');
-        process.exit(1);
-    }, 10000).unref();
+// CORS configuration - allow all origins in development, should be restricted in production
+const corsOptions = {
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true,
 };
 
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '10mb' }));
+
+app.get('/', (req, res) => {
+    res.json({
+        status: 'ok',
+        message: 'YouTube Stats Service API',
+        version: '1.0.0'
+    });
+});
+
+app.use('/api', router);
+
+// Error handler must be last middleware
+app.use(errorHandler);
+
+// In local/dev we start the HTTP listener as before.
+// In serverless environments like Vercel, we export the app and
+// let the platform handle the request lifecycle.
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+        console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        if (process.env.USE_MOCK_DATA === 'true') {
+            console.log('Using MOCK_DATA mode');
+        }
+        const ffmpegCheck = spawnSync('ffmpeg', ['-version'], { encoding: 'utf-8' });
+        const ffprobeCheck = spawnSync('ffprobe', ['-version'], { encoding: 'utf-8' });
+        if (ffmpegCheck.status !== 0 || ffprobeCheck.status !== 0) {
+            console.warn('ffmpeg/ffprobe not detected in PATH. High-resolution merging may be unavailable.');
+        }
+    });
+}
+
+export default app;
