@@ -108,6 +108,7 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
   const [progress, setProgress] = useState(0);
   const [progressStage, setProgressStage] = useState('');
   const [cachedUrl, setCachedUrl] = useState<string | null>(null);
+  const [blockedFormatIds, setBlockedFormatIds] = useState<string[]>([]);
 
   // Clear cache if URL changes
   useEffect(() => {
@@ -118,15 +119,22 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
       setSelectedQuality("");
       setSelectedBitrate("");
       setCachedUrl(null);
+      setBlockedFormatIds([]);
     }
   }, [videoUrl, cachedUrl]);
 
   const sanitizeFileName = (name: string) =>
     name.replace(/[\\/:*?"<>|]+/g, "").trim() || "video";
 
+  // Apply blocked-format filter (formats that previously failed to download)
+  const effectiveFormats = useMemo(
+    () => formats.filter((f) => !blockedFormatIds.includes(f.format_id)),
+    [formats, blockedFormatIds]
+  );
+
   // Filter formats based on selected options
   const filteredFormats = useMemo(() => {
-    let filtered = formats;
+    let filtered = effectiveFormats;
 
     // Filter by quality if selected
     if (selectedQuality) {
@@ -142,11 +150,11 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
       if (b === "mp4" && a !== "mp4") return 1;
       return a.localeCompare(b);
     });
-  }, [formats, selectedQuality]);
+  }, [effectiveFormats, selectedQuality]);
 
   // Filter qualities based on selected options
   const filteredQualities = useMemo(() => {
-    let filtered = formats;
+    let filtered = effectiveFormats;
 
     // Filter by format if selected
     if (selectedFormat) {
@@ -161,11 +169,11 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
       const numB = parseInt(b.replace('p', '') || '0');
       return numB - numA; // Sort descending
     });
-  }, [formats, selectedFormat]);
+  }, [effectiveFormats, selectedFormat]);
 
   // Filter bitrates based on selected options
   const filteredBitrates = useMemo(() => {
-    let filtered = formats;
+    let filtered = effectiveFormats;
 
     // Filter by format if selected
     if (selectedFormat) {
@@ -183,16 +191,16 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
       .filter((b): b is string => b !== undefined);
 
     return unique;
-  }, [formats, selectedFormat, selectedQuality]);
+  }, [effectiveFormats, selectedFormat, selectedQuality]);
 
   // Find the selected format_id based on current selections
   const selectedFormatId = useMemo(() => {
     if (!selectedFormat && !selectedQuality && !selectedBitrate) {
       // If nothing is selected, return the first available format_id
-      return formats.length > 0 ? formats[0].format_id : null;
+      return effectiveFormats.length > 0 ? effectiveFormats[0].format_id : null;
     }
 
-    let filtered = formats;
+    let filtered = effectiveFormats;
 
     if (selectedFormat) {
       filtered = filtered.filter((f) => f.ext === selectedFormat);
@@ -232,7 +240,7 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
     }
 
     return selectedId;
-  }, [formats, selectedFormat, selectedQuality, selectedBitrate]);
+  }, [effectiveFormats, selectedFormat, selectedQuality, selectedBitrate]);
 
   const handleOpenDownload = async () => {
     if (!videoUrl) return;
@@ -269,19 +277,57 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
       setFormats(formatsData);
       setAvailableOptions(options);
 
-      // Set default selections
-      // Set Format and Quality, but NOT Bitrate
-      if (options.formats.length > 0) {
-        const defaultFormat = options.formats.find((f) => f === "mp4") || options.formats[0];
-        setSelectedFormat(defaultFormat);
+      // --- Compute smarter defaults that are internally consistent ---
+      // 1) Default format: prefer mp4 if available
+      const defaultFormat =
+        options.formats.find((f) => f === "mp4") || options.formats[0] || "";
+
+      // 2) Default quality: highest quality that exists for the default format
+      let defaultQuality = "";
+      if (defaultFormat) {
+        const qualitiesForFormat = Array.from(
+          new Set(
+            formatsData
+              .filter((f) => f.ext === defaultFormat && f.quality)
+              .map((f) => f.quality as string)
+          )
+        ).sort((a, b) => {
+          const numA = parseInt(a.replace("p", "") || "0");
+          const numB = parseInt(b.replace("p", "") || "0");
+          return numB - numA;
+        });
+        defaultQuality = qualitiesForFormat[0] || "";
       }
-      if (options.qualities.length > 0) {
-        setSelectedQuality(options.qualities[0]);
+      // Fallback to first global quality if nothing was found
+      if (!defaultQuality && options.qualities.length > 0) {
+        defaultQuality = options.qualities[0];
       }
-      // Set first available bitrate as default
-      if (options.bitrates.length > 0) {
-        setSelectedBitrate(options.bitrates[0]);
+
+      // 3) Default bitrate: highest bitrate that exists for the chosen format + quality
+      let defaultBitrate = "";
+      if (defaultFormat && defaultQuality) {
+        const bitratesForCombo = Array.from(
+          new Set(
+            formatsData
+              .filter(
+                (f) =>
+                  f.ext === defaultFormat &&
+                  f.quality === defaultQuality &&
+                  typeof f.bitrate === "number"
+              )
+              .map((f) => f.bitrate as number)
+          )
+        )
+          .sort((a, b) => b - a)
+          .map(formatBitrate)
+          .filter((b): b is string => b !== undefined);
+        defaultBitrate = bitratesForCombo[0] || "";
       }
+
+      // Apply the computed defaults
+      setSelectedFormat(defaultFormat);
+      setSelectedQuality(defaultQuality);
+      setSelectedBitrate(defaultBitrate);
 
       setCachedUrl(videoUrl);
     } catch (e: unknown) {
@@ -296,7 +342,7 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
 
   // Helper function to compute filtered qualities based on format 
   const computeFilteredQualities = (format?: string) => {
-    let filtered = formats;
+    let filtered = effectiveFormats;
     if (format) filtered = filtered.filter((f) => f.ext === format);
     const unique = Array.from(new Set(filtered.map((f) => f.quality).filter((q): q is string => q !== undefined)));
     return unique.sort((a, b) => {
@@ -309,7 +355,7 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
 
   // Helper function to compute filtered bitrates based on format and quality
   const computeFilteredBitrates = (format?: string, quality?: string) => {
-    let filtered = formats;
+    let filtered = effectiveFormats;
     if (format) filtered = filtered.filter((f) => f.ext === format);
     if (quality) filtered = filtered.filter((f) => f.quality === quality);
     const unique = Array.from(new Set(filtered.map((f) => f.bitrate).filter((b): b is number => b !== undefined)))
@@ -356,7 +402,7 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
 
     // Find a match that has this bitrate
     // PRIORITIZE matches that keep the current Format and Quality
-    const exactMatch = formats.find(f =>
+    const exactMatch = effectiveFormats.find(f =>
       bitrateMatches(f.bitrate, bitrate) &&
       f.ext === selectedFormat &&
       f.quality === selectedQuality
@@ -368,7 +414,7 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
     }
 
     // Second priority: Keep the format, but allow quality to change
-    const formatMatch = formats.find(f =>
+    const formatMatch = effectiveFormats.find(f =>
       bitrateMatches(f.bitrate, bitrate) &&
       f.ext === selectedFormat
     );
@@ -381,7 +427,7 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
     }
 
     // Third priority: Allow format to change (only if bitrate doesn't exist in current format)
-    const anyMatch = formats.find(f => bitrateMatches(f.bitrate, bitrate));
+    const anyMatch = effectiveFormats.find(f => bitrateMatches(f.bitrate, bitrate));
     if (anyMatch) {
       if (anyMatch.ext && anyMatch.ext !== selectedFormat) {
         setSelectedFormat(anyMatch.ext);
@@ -479,6 +525,15 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Network error";
       setDownloadError(msg);
+
+      // If backend reports a specific format that failed, blacklist it for this session
+      const m = msg.match(/Failed to download format\s+(\d+)/i);
+      if (m && m[1]) {
+        const badId = m[1];
+        setBlockedFormatIds((prev) =>
+          prev.includes(badId) ? prev : [...prev, badId]
+        );
+      }
     } finally {
       setDownloading(false);
       setProgress(0);

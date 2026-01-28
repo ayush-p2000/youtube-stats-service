@@ -16,10 +16,11 @@ export default function StoreProvider({
         <Provider store={store}>
             <ThemeProvider
                 attribute="class"
-                defaultTheme="system"
-                enableSystem
+                defaultTheme="light"
+                enableSystem={false}
                 disableTransitionOnChange={false}
-                storageKey="youtube-stats-theme"
+                // Use a new storage key so old system-based values are ignored
+                storageKey="yt-stats-theme-v2"
             >
                 {children}
             </ThemeProvider>
