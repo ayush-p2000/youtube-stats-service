@@ -24,6 +24,26 @@ const limiter = rateLimit({
   max: 120,
   standardHeaders: true,
   legacyHeaders: false,
+  // Custom keyGenerator for Vercel proxy compatibility
+  keyGenerator: (req) => {
+    // Vercel sets X-Forwarded-For header with the client IP
+    const forwarded = req.headers['x-forwarded-for'];
+    if (forwarded) {
+      // X-Forwarded-For can be a string or array, and may contain multiple IPs
+      const ip = typeof forwarded === 'string' 
+        ? forwarded.split(',')[0].trim() 
+        : Array.isArray(forwarded) 
+          ? forwarded[0]?.split(',')[0].trim() 
+          : null;
+      if (ip) return ip;
+    }
+    
+    // Fallback to req.ip (works if trust proxy is set correctly)
+    if (req.ip) return req.ip;
+    
+    // Last resort: use socket remote address or a fallback key
+    return req.socket.remoteAddress || `fallback-${req.headers['user-agent'] || 'unknown'}`;
+  },
 });
 
 app.use(limiter);
