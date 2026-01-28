@@ -1,6 +1,6 @@
 // Test downloading format 399 (1080p, 378 kbps) specifically
 
-const SERVER_URL = process.env.SERVER_URL || 'http://localhost:5000';
+const NEXT_PUBLIC_SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
 const TEST_VIDEO_URL = process.env.TEST_VIDEO_URL || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
 async function testFormat399() {
@@ -9,7 +9,7 @@ async function testFormat399() {
     try {
         // First, get formats to verify format 399 exists
         console.log('📋 Step 1: Verify Format 399 exists');
-        const formatsResponse = await fetch(`${SERVER_URL}/api/formats`, {
+        const formatsResponse = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/formats`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: TEST_VIDEO_URL }),
@@ -40,7 +40,7 @@ async function testFormat399() {
 
         // Test download with format_id 399
         console.log('📋 Step 2: Test Download with format_id=399');
-        const downloadResponse = await fetch(`${SERVER_URL}/api/download`, {
+        const downloadResponse = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/download`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 

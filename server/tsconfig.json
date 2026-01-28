@@ -39,5 +39,7 @@
   },
   "ts-node": {
     "esm": true
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["api/**", "node_modules"]
 }

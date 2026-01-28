@@ -126,7 +126,7 @@ export const parseVideoUrl = createAsyncThunk(
     'video/parseUrl',
     async (url: string, { rejectWithValue }) => {
         try {
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
+            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
             const response = await fetch(`${serverUrl}/api/parse-url`, {
                 method: 'POST',
                 headers: {
@@ -157,7 +157,7 @@ export const fetchVideoStats = createAsyncThunk(
             const state = getState() as { video: VideoState };
             const usedApiKey = apiKey || state.video.apiKey;
 
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
+            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
             let url = pageToken
                 ? `${serverUrl}/api/stats/${videoId}?pageToken=${pageToken}`
                 : `${serverUrl}/api/stats/${videoId}`;
@@ -204,7 +204,7 @@ export const analyzeSentiment = createAsyncThunk(
             const state = getState() as { video: VideoState };
             const apiKey = state.video.apiKey;
 
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
+            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
             const response = await fetch(`${serverUrl}/api/analyze-sentiment`, {
                 method: 'POST',
                 headers: {
@@ -235,7 +235,7 @@ export const predictMetrics = createAsyncThunk(
             const state = getState() as { video: VideoState };
             const apiKey = state.video.apiKey;
 
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
+            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
             const response = await fetch(`${serverUrl}/api/predict/${videoId}`, {
                 method: 'POST',
                 headers: {

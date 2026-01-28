@@ -1,17 +1,17 @@
 // Test download API with different parameter combinations
 
-const SERVER_URL = process.env.SERVER_URL || 'http://localhost:5000';
+const NEXT_PUBLIC_SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
 const TEST_VIDEO_URL = process.env.TEST_VIDEO_URL || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
 async function testDownloadAPI() {
     console.log('🧪 Testing Download API...\n');
-    console.log(`Server URL: ${SERVER_URL}`);
+    console.log(`Server URL: ${NEXT_PUBLIC_SERVER_URL}`);
     console.log(`Test Video URL: ${TEST_VIDEO_URL}\n`);
 
     try {
         // First, get available formats
         console.log('📋 Step 1: Get Available Formats');
-        const formatsResponse = await fetch(`${SERVER_URL}/api/formats`, {
+        const formatsResponse = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/formats`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: TEST_VIDEO_URL }),
@@ -39,7 +39,7 @@ async function testDownloadAPI() {
         const testFormat = formatsData.availableOptions?.formats?.[0] || 'mp4';
         console.log(`   Testing with format: ${testFormat}`);
         
-        const downloadResponse1 = await fetch(`${SERVER_URL}/api/download`, {
+        const downloadResponse1 = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/download`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -66,7 +66,7 @@ async function testDownloadAPI() {
         if (testFormatId) {
             console.log(`   Testing with format_id: ${testFormatId}`);
             
-            const downloadResponse2 = await fetch(`${SERVER_URL}/api/download`, {
+            const downloadResponse2 = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/download`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -93,7 +93,7 @@ async function testDownloadAPI() {
         if (testQuality) {
             console.log(`   Testing with quality: ${testQuality}`);
             
-            const downloadResponse3 = await fetch(`${SERVER_URL}/api/download`, {
+            const downloadResponse3 = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/download`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -119,7 +119,7 @@ async function testDownloadAPI() {
         if (testFormat && testQuality) {
             console.log(`   Testing with format: ${testFormat}, quality: ${testQuality}`);
             
-            const downloadResponse4 = await fetch(`${SERVER_URL}/api/download`, {
+            const downloadResponse4 = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/download`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 

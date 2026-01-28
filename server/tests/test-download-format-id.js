@@ -1,6 +1,6 @@
 // Test download API with format_id to ensure it uses the exact format
 
-const SERVER_URL = process.env.SERVER_URL || 'http://localhost:5000';
+const NEXT_PUBLIC_SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
 const TEST_VIDEO_URL = process.env.TEST_VIDEO_URL || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
 async function testDownloadWithFormatId() {
@@ -9,7 +9,7 @@ async function testDownloadWithFormatId() {
     try {
         // First, get available formats
         console.log('📋 Step 1: Get Available Formats');
-        const formatsResponse = await fetch(`${SERVER_URL}/api/formats`, {
+        const formatsResponse = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/formats`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: TEST_VIDEO_URL }),
@@ -51,7 +51,7 @@ async function testDownloadWithFormatId() {
 
         // Test download with format_id only
         console.log('   Testing download with format_id only...');
-        const downloadResponse1 = await fetch(`${SERVER_URL}/api/download`, {
+        const downloadResponse1 = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/download`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -83,7 +83,7 @@ async function testDownloadWithFormatId() {
         // Test download with format_id + other parameters (format_id should take priority)
         console.log('📋 Step 3: Test Download with format_id + other parameters');
         console.log('   (format_id should take priority over other filters)');
-        const downloadResponse2 = await fetch(`${SERVER_URL}/api/download`, {
+        const downloadResponse2 = await fetch(`${NEXT_PUBLIC_SERVER_URL}/api/download`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
