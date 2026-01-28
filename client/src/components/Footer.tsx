@@ -1,4 +1,12 @@
-import FooterRainbowGradient from "./FooterRainbowGradient";
+"use client";
+
+import dynamic from "next/dynamic";
+
+// Dynamically import with SSR disabled to prevent hydration issues
+const FooterRainbowGradient = dynamic(
+  () => import("./FooterRainbowGradient"),
+  { ssr: false }
+);
 
 const Footer: React.FC = () => {
   return (
@@ -16,7 +24,7 @@ const Footer: React.FC = () => {
           Built for creators, analysts, and marketers to understand audience engagement and content performance.
         </p>
         <span className="text-xs font-medium text-gray-400 dark:text-zinc-600 uppercase tracking-widest">
-          © {new Date().getFullYear()} YouTube Analytics Suite. Crafted with care and innovation.
+          © 2026 YouTube Analytics Suite. Crafted with care and innovation.
         </span>
       </div>
     </footer>

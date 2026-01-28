@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 5000;
 // Validate required environment variables
 const requiredEnvVars = ['YOUTUBE_API_KEY'];
 const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar] || process.env[envVar] === '');
-console.log('xxx', requiredEnvVars.toString(), missingEnvVars)
 
 if (missingEnvVars.length > 0 && process.env.USE_MOCK_DATA !== 'true') {
     console.warn(`Warning: Missing environment variables: ${missingEnvVars.join(', ')}`);

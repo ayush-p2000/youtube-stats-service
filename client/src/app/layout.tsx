@@ -43,7 +43,8 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen transition-colors duration-300 text-gray-900 dark:text-gray-100 bg-[#f5f6fa] dark:bg-[#181a20]`}
+        suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen transition-colors duration-300 text-foreground bg-background`}
       >
         <Providers>
           <Navbar />
