@@ -21,10 +21,13 @@ RUN python -m venv /opt/venv && \
 # ── Runtime Stage ──────────────────────────────────────────
 FROM python:3.11-slim
 
-# Install runtime dependencies only (ffmpeg for yt-dlp video merging)
+# Install runtime dependencies:
+#   ffmpeg  — required by yt-dlp for video/audio merging
+#   nodejs  — required by yt-dlp as a JavaScript runtime to bypass YouTube bot detection
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     ffmpeg \
+    nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security
