@@ -9,13 +9,14 @@ WORKDIR /build
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy and install requirements to a virtual environment
 COPY requirements.txt .
 RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+    /opt/venv/bin/pip install --no-cache-dir --pre -r requirements.txt
 
 
 # ── Runtime Stage ──────────────────────────────────────────
@@ -24,10 +25,12 @@ FROM python:3.11-slim
 # Install runtime dependencies:
 #   ffmpeg  — required by yt-dlp for video/audio merging
 #   nodejs  — required by yt-dlp as a JavaScript runtime to bypass YouTube bot detection
+#   ca-certificates — required for TLS verification
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     ffmpeg \
     nodejs \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security
