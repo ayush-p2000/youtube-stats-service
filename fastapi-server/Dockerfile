@@ -40,8 +40,7 @@ COPY --chown=appuser:appuser . .
 
 # Set environment variables
 ENV PATH="/opt/venv/bin:$PATH" \
-    PYTHONUNBUFFERED=1 \
-    PORT=5001
+    PYTHONUNBUFFERED=1
 
 # Create download directory
 RUN mkdir -p /app/download && chown appuser:appuser /app/download
@@ -49,12 +48,12 @@ RUN mkdir -p /app/download && chown appuser:appuser /app/download
 # Switch to non-root user
 USER appuser
 
-# Expose port
-EXPOSE 5001
+# Expose default port (Railway will override $PORT at runtime)
+EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5001/api/health')" || exit 1
+# Health check (works with Railway's dynamic $PORT)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD python -c "import urllib.request, os; urllib.request.urlopen('http://localhost:' + os.environ.get('PORT', '8080') + '/api/health')" || exit 1
 
-# Run application (exec form for proper signal handling)
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5001"]
+# Run application with Railway's $PORT (defaults to 8080 if not set)
+CMD ["sh", "-c", "python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
