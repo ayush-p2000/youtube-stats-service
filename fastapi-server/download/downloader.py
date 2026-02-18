@@ -25,7 +25,11 @@ SABR_BLOCKED_FORMAT_IDS = {
     "694", "695", "696", "697", "698", "699",   # AV1 HDR alt
 }
 
-BASE_ARGS = ["--no-playlist"]
+BASE_ARGS = [
+    "--no-playlist",
+    "--extractor-args", "youtube:player-client=web_creator,ios",
+    "--client-name", "web_creator"
+]
 
 
 # ── Helpers ───────────────────────────────────────────────
@@ -96,9 +100,9 @@ def list_formats(url: str) -> dict:
     result = subprocess.run(args, capture_output=True, text=True, timeout=60)
 
     if result.returncode != 0:
-        raise RuntimeError(
-            f"yt-dlp failed: {result.stderr.strip() or 'unknown error'}"
-        )
+        err_msg = result.stderr.strip() or "unknown error"
+        print(f"DEBUG: yt-dlp list_formats failed for {url}. Error: {err_msg}")
+        raise RuntimeError(f"yt-dlp failed: {err_msg}")
 
     info = json.loads(result.stdout)
     raw_formats = info.get("formats", [])
