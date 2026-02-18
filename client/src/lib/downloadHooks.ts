@@ -155,16 +155,24 @@ export function useVideoDownload({ videoUrl }: UseVideoDownloadProps): UseVideoD
   const filteredQualities = useMemo(() => {
     // NOTE: We do NOT filter by format here anymore.
     // This allows users to see 4K/1440p resolutions even if "MP4" is selected.
-    // handleQualityChange will automatically switch the format if needed.
-    const filtered = effectiveFormats;
+    const unique = Array.from(new Set(effectiveFormats.map((f) => f.quality).filter((q): q is string => !!q)));
 
-    const unique = Array.from(new Set(filtered.map((f) => f.quality).filter((q): q is string => q !== undefined)));
-    return unique.sort((a, b) => {
-      const numA = parseInt(a.replace('p', '') || '0');
-      const numB = parseInt(b.replace('p', '') || '0');
+    const sorted = unique.sort((a, b) => {
+      const numA = parseInt(a?.replace('p', '') || '0');
+      const numB = parseInt(b?.replace('p', '') || '0');
       return numB - numA; // Sort descending
     });
-  }, [effectiveFormats]);
+
+    // TRACE LOGGING: Let's see exactly what's reaching the dropdown
+    console.log('[DEBUG] filteredQualities Updated:', {
+      totalPotentialFormats: effectiveFormats.length,
+      allUniqueQualities: unique,
+      finalSortedList: sorted,
+      currentlySelectedFormat: selectedFormat
+    });
+
+    return sorted;
+  }, [effectiveFormats, selectedFormat]);
 
   // Filter bitrates based on selected options
   const filteredBitrates = useMemo(() => {
@@ -273,50 +281,55 @@ export function useVideoDownload({ videoUrl }: UseVideoDownloadProps): UseVideoD
       setAvailableOptions(options);
 
       // --- Compute smarter defaults that are internally consistent ---
-      // 1) Default format: prefer mp4 if available
-      const defaultFormat =
-        options.formats.find((f) => f === "mp4") || options.formats[0] || "";
 
-      // 2) Default quality: highest quality that exists for the default format
-      let defaultQuality = "";
-      if (defaultFormat) {
-        const qualitiesForFormat = Array.from(
-          new Set(
-            formatsData
-              .filter((f) => f.ext === defaultFormat && f.quality)
-              .map((f) => f.quality as string)
-          )
-        ).sort((a, b) => {
-          const numA = parseInt(a.replace("p", "") || "0");
-          const numB = parseInt(b.replace("p", "") || "0");
+      // 1. Pick the BEST overall quality from the entire video
+      const allQualities = Array.from(new Set(formatsData.map(f => f.quality).filter((q): q is string => !!q)))
+        .sort((a, b) => {
+          const numA = parseInt(a?.replace("p", "") || "0");
+          const numB = parseInt(b?.replace("p", "") || "0");
           return numB - numA;
         });
-        defaultQuality = qualitiesForFormat[0] || "";
-      }
-      // Fallback to first global quality if nothing was found
-      if (!defaultQuality && options.qualities.length > 0) {
-        defaultQuality = options.qualities[0];
-      }
 
-      // 3) Default bitrate: highest bitrate that exists for the chosen format + quality
+      const bestOverallQuality = allQualities[0] || "";
+
+      // 2. Find formats that support this best quality
+      const formatsSupportingBestQuality = formatsData
+        .filter(f => f.quality === bestOverallQuality)
+        .map(f => f.ext);
+
+      // Prefer mp4 if it supports the best quality, otherwise take the first available
+      const defaultFormat = formatsSupportingBestQuality.includes("mp4")
+        ? "mp4"
+        : (formatsSupportingBestQuality[0] || options.formats[0] || "");
+
+      // 3. Selection of quality: use bestOverallQuality
+      const defaultQuality = bestOverallQuality;
+
+      // 4. Default bitrate: best bitrate for the chosen format + quality
       let defaultBitrate = "";
       if (defaultFormat && defaultQuality) {
         const bitratesForCombo = Array.from(
           new Set(
             formatsData
-              .filter(
-                (f) =>
-                  f.ext === defaultFormat &&
-                  f.quality === defaultQuality &&
-                  typeof f.bitrate === "number"
-              )
-              .map((f) => f.bitrate as number)
+              .filter(f => f.ext === defaultFormat && f.quality === defaultQuality && typeof f.bitrate === "number")
+              .map(f => f.bitrate as number)
           )
         )
           .sort((a, b) => b - a)
           .map(formatBitrate)
           .filter((b): b is string => b !== undefined);
         defaultBitrate = bitratesForCombo[0] || "";
+      }
+
+      if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+        console.log('Download Init Debug:', {
+          bestOverallQuality,
+          formatsSupportingBestQuality,
+          defaultFormat,
+          defaultQuality,
+          defaultBitrate,
+          allAvailableQualities: allQualities
+        });
       }
 
       // Apply the computed defaults
