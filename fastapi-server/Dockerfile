@@ -26,12 +26,18 @@ FROM python:3.11-slim
 #   ffmpeg  — required by yt-dlp for video/audio merging
 #   nodejs  — required by yt-dlp as a JavaScript runtime to bypass YouTube bot detection
 #   ca-certificates — required for TLS verification
+#   curl — required to fetch NodeSource script
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     ffmpeg \
-    nodejs \
     ca-certificates \
-    && ln -s /usr/bin/nodejs /usr/bin/node \
+    curl \
+    gnupg \
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
+    && apt-get update && apt-get install nodejs -y --no-install-recommends \
+    && ln -s /usr/bin/node /usr/bin/nodejs || true \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security
