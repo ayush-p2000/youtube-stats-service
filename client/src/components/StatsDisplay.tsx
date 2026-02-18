@@ -97,7 +97,7 @@ const StatBox: React.FC<StatBoxProps> = ({ title, value, icon: Icon, color, subt
                     <Icon sx={{ fontSize: 24 }} />
                 </div>
                 <div className="flex flex-col items-end">
-                    <Typography className="text-gray-500 dark:text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mb-1.5 opacity-80">
+                    <Typography className="text-gray-500 dark:text-zinc-400 text-[10px] font-black uppercase tracking-[0.3em] mb-1.5 opacity-80">
                         {title}
                     </Typography>
                     <Typography
@@ -117,7 +117,7 @@ const StatBox: React.FC<StatBoxProps> = ({ title, value, icon: Icon, color, subt
                     </Typography>
                 )}
                 {description && (
-                    <Typography className="text-[10px] text-gray-500 dark:text-zinc-500 font-medium leading-relaxed italic opacity-80">
+                    <Typography className="text-[10px] text-gray-500 dark:text-zinc-400 font-medium leading-relaxed italic opacity-80">
                         &quot;{description}&quot;
                     </Typography>
                 )}
@@ -157,7 +157,7 @@ export default function StatsDisplay() {
     const viralMomentum = views > 0 ? ((likes * 2 + comments * 5) / views) * 100 : 0;
 
     return (
-        <div className="w-full max-w-7xl mx-auto p-6 sm:p-10 space-y-12 sm:space-y-20 mb-20 animate-in fade-in slide-in-from-bottom-8 duration-2000">
+        <div className="w-full max-w-7xl mx-auto p-4 sm:p-10 space-y-12 sm:space-y-20 mb-20 animate-in fade-in slide-in-from-bottom-8 duration-2000">
             <style jsx global>{borderBeamAnimation}</style>
 
             {/* Header Content */}
@@ -188,7 +188,7 @@ export default function StatsDisplay() {
                             className="flex mt-7 items-center gap-4"
                         >
                             <span className="h-px w-12 bg-red-500/30" />
-                            <p className="text-gray-500 dark:text-zinc-500 font-bold uppercase text-[10px] sm:text-[12px] tracking-[0.5em] italic">
+                            <p className="text-gray-500 dark:text-zinc-400 font-bold uppercase text-[10px] sm:text-[12px] tracking-[0.5em] italic">
                                 Video Engagement Matrix
                             </p>
                             <span className="h-px w-12 bg-red-500/30" />
@@ -238,7 +238,7 @@ export default function StatsDisplay() {
                             Heuristic Analytics
                         </Typography>
                         <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-800" />
-                        <span className="text-[10px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-[0.3em] hidden sm:block">AI Models Active</span>
+                        <span className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-[0.3em] hidden sm:block">AI Models Active</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
@@ -273,7 +273,7 @@ export default function StatsDisplay() {
                 <div className="p-8 border border-gray-200 dark:border-white/5 bg-gray-100 dark:bg-zinc-950/20 backdrop-blur-xl rounded-[2.5rem] flex items-center justify-between ring-1 ring-inset ring-black/5 dark:ring-white/5">
                     <div className="flex items-center gap-4">
                         <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                        <Typography className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[10px] tracking-[0.4em]">
+                        <Typography className="text-gray-500 dark:text-zinc-400 font-black uppercase text-[10px] tracking-[0.4em]">
                             Matrix Synchronized: High-Fidelity
                         </Typography>
                     </div>

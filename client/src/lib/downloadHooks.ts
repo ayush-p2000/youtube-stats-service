@@ -90,7 +90,7 @@ const bitrateMatches = (bitrate: number | undefined, targetBitrateStr: string): 
   return Math.abs(bitrate - targetBitrate) <= tolerance;
 };
 
-export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps): UseVideoDownloadReturn {
+export function useVideoDownload({ videoUrl }: UseVideoDownloadProps): UseVideoDownloadReturn {
   const [open, setOpen] = useState(false);
   const [formats, setFormats] = useState<FormatOption[]>([]);
   const [availableOptions, setAvailableOptions] = useState<AvailableOptions>({
@@ -123,8 +123,7 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
     }
   }, [videoUrl, cachedUrl]);
 
-  const sanitizeFileName = (name: string) =>
-    name.replace(/[\\/:*?"<>|]+/g, "").trim() || "video";
+
 
   // Apply blocked-format filter (formats that previously failed to download)
   const effectiveFormats = useMemo(
@@ -497,23 +496,23 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
 
           if (job.status === 'completed') {
             // 3. Download File
-            setProgressStage('Downloading file to device...');
-            const fileRes = await fetch(`${serverUrl}/api/download/file/${jobId}`);
-            if (!fileRes.ok) throw new Error("File download failed");
+            setProgressStage('Transferring to device...');
+            // Trigger native browser download to bypass memory limits and show real progress
+            const downloadUrl = `${serverUrl}/api/download/file/${jobId}`;
+            const link = document.createElement("a");
+            link.href = downloadUrl;
+            // The filename is suggested by the server via Content-Disposition header
+            link.style.display = "none";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
-            const blob = await fileRes.blob();
-            const dlUrl = window.URL.createObjectURL(blob);
-            const filename = job.filename || (videoTitle ? `${sanitizeFileName(videoTitle)}.${selectedFormat || 'mp4'}` : `video.${selectedFormat || 'mp4'}`);
-
-            const a = document.createElement("a");
-            a.href = dlUrl;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(dlUrl);
-
-            setOpen(false);
+            // Close dialog after a short delay to allow the browser to initiate the download
+            setTimeout(() => {
+              setOpen(false);
+              setDownloading(false);
+            }, 1500);
+            return; // Exit the loop and function
           }
         }
       }

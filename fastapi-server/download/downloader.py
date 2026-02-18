@@ -312,6 +312,24 @@ def run_download(job_id: str, url: str,
                             stage=f"Downloading: {int(pct)}%",
                             progress=min(95, mapped),
                         )
+                elif "[Merger]" in line or "Merging formats" in line:
+                    job_store.update_job(
+                        job_id,
+                        stage="Finalizing & Merging Streams...",
+                        progress=97,
+                    )
+                elif "[Fixup" in line or "Fixing" in line:
+                    job_store.update_job(
+                        job_id,
+                        stage="Fixing container metadata...",
+                        progress=98,
+                    )
+                elif "[VideoConvertor]" in line:
+                    job_store.update_job(
+                        job_id,
+                        stage="Converting video format...",
+                        progress=99,
+                    )
 
         # Drain stderr (warnings etc.)
         stderr_out = ""

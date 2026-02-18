@@ -41,7 +41,7 @@ export default function TopicExtraction() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 sm:p-10 space-y-12 mb-20 animate-in fade-in slide-in-from-bottom-8 duration-2000">
+    <div className="w-full max-w-7xl mx-auto p-4 sm:p-10 space-y-12 mb-20 animate-in fade-in slide-in-from-bottom-8 duration-2000">
       <style jsx global>{borderBeamAnimation}</style>
 
       {/* Header Section */}
@@ -54,7 +54,7 @@ export default function TopicExtraction() {
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tighter flex flex-wrap items-center gap-x-3 gap-y-1">
               Topic <span className="text-amber-600 dark:text-amber-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]">Extraction</span>
             </h3>
-            <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
+            <p className="text-gray-500 dark:text-zinc-400 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
               Semantic Clustering <span className="hidden sm:block w-8 h-px bg-zinc-800 dark:bg-white/10" /> Keyword Density
             </p>
           </div>
@@ -106,7 +106,7 @@ export default function TopicExtraction() {
             <div className="p-3 bg-cyan-500/10 rounded-xl text-cyan-600 dark:text-cyan-500 border border-cyan-500/20">
               <Info sx={{ fontSize: 20 }} />
             </div>
-            <Typography className="text-[11px] font-bold text-gray-500 dark:text-zinc-500 leading-relaxed uppercase tracking-widest text-center md:text-left">
+            <Typography className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 leading-relaxed uppercase tracking-widest text-center md:text-left">
               These high-density keywords represent the core thematic clusters identified within the audience conversation matrix.
             </Typography>
           </div>
