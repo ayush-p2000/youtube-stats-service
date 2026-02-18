@@ -1,0 +1,44 @@
+services:
+  youtube-stats-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: youtube-stats-api
+    ports:
+      - "${PORT:-5001}:5001"
+    environment:
+      - PORT=5001
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - PYTHONUNBUFFERED=1
+    env_file: .env
+    volumes:
+      # Development: hot reload with source code mounts
+      - ./main.py:/app/main.py
+      - ./config.py:/app/config.py
+      - ./ml:/app/ml
+      - ./models:/app/models
+      - ./download:/app/download
+      - ./utils:/app/utils
+      # Persistent download storage
+      - download_data:/app/download
+    # Watch for file changes (auto-reload in development)
+    develop:
+      watch:
+        - path: .
+          action: sync
+          target: /app
+          ignore:
+            - __pycache__
+            - .git
+            - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  download_data:
+    driver: local
