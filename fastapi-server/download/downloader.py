@@ -220,6 +220,13 @@ def _build_download_args(
         args += ["--merge-output-format", "mp4"]
 
     args.append("--newline")
+    
+    # ── Compatibility Fix: Force AAC audio for MP4 ────────────
+    # Many players (Windows Media Player, etc.) don't support Opus in MP4.
+    target_ext = merge_ext or ext or "mp4"
+    if target_ext.lower() == "mp4":
+        args += ["--postprocessor-args", "Merger:-c:a aac"]
+        
     args.append(url)
     return args
 
