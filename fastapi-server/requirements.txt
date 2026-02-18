@@ -4,5 +4,5 @@ pydantic>=2.10.0
 pydantic-settings>=2.7.0
 python-dotenv>=1.0.0
 textblob>=0.17.1
-yt-dlp[default,curl-cffi]
+yt-dlp-nightly[default,curl-cffi]
 curl-cffi>=0.7.0
