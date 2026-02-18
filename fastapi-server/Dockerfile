@@ -31,6 +31,7 @@ RUN apt-get update && \
     ffmpeg \
     nodejs \
     ca-certificates \
+    && ln -s /usr/bin/nodejs /usr/bin/node \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security

@@ -29,7 +29,7 @@ BASE_ARGS = [
     "--no-playlist",
     "--js-runtimes", "node",
     "--impersonate", "chrome",
-    "--extractor-args", "youtube:player-client=web,web_safari,android_vr"
+    "--extractor-args", "youtube:player-client=ios,android,mweb,web,web_safari,android_vr"
 ]
 
 
@@ -95,8 +95,9 @@ def list_formats(url: str) -> dict:
     Returns a dict matching the existing client API contract:
       {formats, availableOptions, ffmpegAvailable, canMerge}
     """
-    args = _yt_dlp_cmd() + ["--dump-single-json", "--skip-download",
-            "--no-playlist", "--quiet", url]
+    args = _yt_dlp_cmd() + BASE_ARGS + [
+        "--dump-single-json", "--skip-download", "--quiet", url
+    ]
 
     result = subprocess.run(args, capture_output=True, text=True, timeout=60)
 
@@ -246,8 +247,9 @@ def run_download(job_id: str, url: str,
                              stage="Fetching video info...", progress=5)
 
         # ── Fetch video metadata ──────────────────────────
-        meta_args = _yt_dlp_cmd() + ["--dump-single-json", "--skip-download",
-                     "--no-playlist", "--quiet", url]
+        meta_args = _yt_dlp_cmd() + BASE_ARGS + [
+            "--dump-single-json", "--skip-download", "--quiet", url
+        ]
         meta_result = subprocess.run(meta_args, capture_output=True,
                                      text=True, timeout=60)
         if meta_result.returncode != 0:
