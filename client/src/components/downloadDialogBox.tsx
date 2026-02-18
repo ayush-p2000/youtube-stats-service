@@ -166,9 +166,9 @@ export default function VideoDownloadDialog({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 30 }}
             transition={{ type: "spring", damping: 20, stiffness: 200 }}
-            className={`relative rounded-[40px] overflow-hidden border ${isDark ? 'border-white/10' : 'border-black/5'} shadow-2xl`}
+            className={`relative rounded-[24px] sm:rounded-[40px] overflow-hidden border ${isDark ? 'border-white/10' : 'border-black/5'} shadow-2xl`}
             style={{
-              background: isDark ? 'rgba(15, 15, 15, 0.85)' : 'rgba(220, 220, 225, 0.92)',
+              background: isDark ? 'rgba(15, 15, 15, 0.98)' : 'rgba(240, 240, 245, 0.98)',
               backdropFilter: 'blur(40px) saturate(180%)',
             }}
           >
@@ -214,25 +214,25 @@ export default function VideoDownloadDialog({
 
             <DialogContent className="p-0 overflow-hidden relative z-10">
               {/* Header */}
-              <div className={`relative p-8 flex items-center justify-between border-b ${isDark ? 'border-white/5' : 'border-black/5'}`}>
-                <div className="flex items-center gap-4">
+              <div className={`relative p-5 sm:p-8 flex items-center justify-between border-b ${isDark ? 'border-white/5' : 'border-black/5'}`}>
+                <div className="flex items-center gap-3 sm:gap-4">
                   <motion.div
                     whileHover={{ rotate: 15, scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     className="relative cursor-pointer"
                   >
                     <div className="absolute inset-0 bg-red-600/30 blur-2xl rounded-2xl animate-pulse" />
-                    <div className="relative bg-linear-to-br from-red-600 to-red-900 p-4 rounded-2xl shadow-xl border border-white/20">
-                      <Download className="w-6 h-6 text-white" />
+                    <div className="relative bg-linear-to-br from-red-600 to-red-900 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-xl border border-white/20">
+                      <Download className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                   </motion.div>
                   <div>
-                    <h2 className={`text-2xl font-black bg-linear-to-r ${isDark ? 'from-white via-white to-gray-500' : 'from-gray-900 via-gray-800 to-gray-500'} bg-clip-text text-transparent tracking-tighter`}>
+                    <h2 className={`text-xl sm:text-2xl font-black bg-linear-to-r ${isDark ? 'from-white via-red-100 to-red-400' : 'from-gray-900 via-gray-800 to-gray-500'} bg-clip-text text-transparent tracking-tighter`}>
                       CORE DOWNLOAD
                     </h2>
                     <div className="flex items-center gap-2 mt-0.5">
                       <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
-                      <span className={`text-[10px] font-bold ${isDark ? 'text-gray-500' : 'text-gray-400'} uppercase tracking-[0.3em]`}>Interface Synchronized</span>
+                      <span className={`text-[9px] sm:text-[10px] font-bold ${isDark ? 'text-zinc-500' : 'text-gray-400'} uppercase tracking-[0.2em] sm:tracking-[0.3em]`}>Interface Synchronized</span>
                     </div>
                   </div>
                 </div>
@@ -240,12 +240,14 @@ export default function VideoDownloadDialog({
                   <IconButton
                     onClick={onClose}
                     sx={{
+                      width: { xs: 36, sm: 40 },
+                      height: { xs: 36, sm: 40 },
                       bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
                       '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                   >
-                    <X size={18} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
+                    <X size={18} className={isDark ? 'text-zinc-400' : 'text-gray-500'} />
                   </IconButton>
                 )}
               </div>
@@ -280,7 +282,7 @@ export default function VideoDownloadDialog({
                   </p>
                 </div>
               ) : (
-                <div className="p-8 space-y-8">
+                <div className="p-5 sm:p-8 space-y-6 sm:space-y-8">
                   {/* Selector Group */}
                   <div className="grid grid-cols-1 gap-6">
                     {/* Format Selector */}
@@ -290,7 +292,7 @@ export default function VideoDownloadDialog({
                     >
                       <div className="flex items-center gap-2 px-1">
                         <FileVideo size={14} className="text-red-500" />
-                        <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">Format Protocol</label>
+                        <label className={`text-[11px] font-black ${isDark ? 'text-zinc-400' : 'text-gray-500'} uppercase tracking-[0.2em]`}>Format Protocol</label>
                       </div>
                       <Select
                         value={selectedFormat || ''}
@@ -337,8 +339,8 @@ export default function VideoDownloadDialog({
                             borderColor: '#dc2626',
                             borderWidth: '2px'
                           },
-                          '& .MuiSelect-select': { py: 0, display: 'flex', alignItems: 'center', height: '68px' },
-                          height: '68px',
+                          '& .MuiSelect-select': { py: 0, display: 'flex', alignItems: 'center', height: { xs: '56px', sm: '68px' } },
+                          height: { xs: '56px', sm: '68px' },
                           fontWeight: 600,
                         }}
                       >
@@ -356,11 +358,11 @@ export default function VideoDownloadDialog({
                     </motion.div>
 
                     {/* Quality/Bitrate Multi-row */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 px-1">
                           <Settings2 size={14} className="text-red-500" />
-                          <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">Resolution</label>
+                          <label className={`text-[11px] font-black ${isDark ? 'text-zinc-400' : 'text-gray-500'} uppercase tracking-[0.2em]`}>Resolution</label>
                         </div>
                         <Select
                           value={selectedQuality || ''}
@@ -388,13 +390,13 @@ export default function VideoDownloadDialog({
                             color: isDark ? 'white' : 'black',
                             bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
                             borderRadius: '20px',
-                            height: '68px',
+                            height: { xs: '56px', sm: '68px' },
                             fontWeight: 600,
                             '& .MuiOutlinedInput-notchedOutline': {
                               border: '1px solid',
                               borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
                             },
-                            '& .MuiSelect-select': { py: 0, display: 'flex', alignItems: 'center', height: '68px' },
+                            '& .MuiSelect-select': { py: 0, display: 'flex', alignItems: 'center', height: { xs: '56px', sm: '68px' } },
                           }}
                         >
                           {filteredQualities.map((q) => (
@@ -406,7 +408,7 @@ export default function VideoDownloadDialog({
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 px-1">
                           <ShieldCheck size={14} className="text-red-500" />
-                          <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">Data Rate</label>
+                          <label className={`text-[11px] font-black ${isDark ? 'text-zinc-400' : 'text-gray-500'} uppercase tracking-[0.2em]`}>Data Rate</label>
                         </div>
                         <Select
                           value={selectedBitrate || ''}
@@ -434,13 +436,13 @@ export default function VideoDownloadDialog({
                             color: isDark ? 'white' : 'black',
                             bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
                             borderRadius: '20px',
-                            height: '68px',
+                            height: { xs: '56px', sm: '68px' },
                             fontWeight: 600,
                             '& .MuiOutlinedInput-notchedOutline': {
                               border: '1px solid',
                               borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
                             },
-                            '& .MuiSelect-select': { py: 0, display: 'flex', alignItems: 'center', height: '68px' },
+                            '& .MuiSelect-select': { py: 0, display: 'flex', alignItems: 'center', height: { xs: '56px', sm: '68px' } },
                           }}
                         >
                           {filteredBitrates.map((b) => (

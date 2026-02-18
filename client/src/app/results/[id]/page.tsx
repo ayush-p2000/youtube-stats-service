@@ -50,7 +50,7 @@ export default function ResultsPage() {
     handleCloseDialog,
     progress,
     progressStage,
-  } = useVideoDownload({ videoUrl, videoTitle: stats?.title });
+  } = useVideoDownload({ videoUrl });
 
   const handleBack = () => {
     dispatch(setIsNavigating(true));

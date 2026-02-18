@@ -84,7 +84,7 @@ export default function PredictiveInsights() {
   const isDark = resolvedTheme === "dark";
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 sm:p-10 space-y-12 sm:space-y-16 mb-20 animate-in fade-in slide-in-from-bottom-8 duration-2000">
+    <div className="w-full max-w-7xl mx-auto p-4 sm:p-10 space-y-12 sm:space-y-16 mb-20 animate-in fade-in slide-in-from-bottom-8 duration-2000">
       <style jsx global>{borderBeamAnimation}</style>
 
       {/* Header Section */}
@@ -97,7 +97,7 @@ export default function PredictiveInsights() {
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tighter flex flex-wrap items-center gap-x-3 gap-y-1">
               Predictive <span className="text-blue-600 dark:text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]">Analytics</span>
             </h3>
-            <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
+            <p className="text-gray-500 dark:text-zinc-400 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
               Temporal Projection <span className="hidden sm:block w-8 h-px bg-zinc-800 dark:bg-white/10" /> Heuristic Models
             </p>
           </div>
@@ -161,7 +161,7 @@ export default function PredictiveInsights() {
                         Growth Trajectory
                       </Typography>
                     </div>
-                    <Typography className="text-[10px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-[0.3em] ml-11 opacity-80">
+                    <Typography className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-[0.3em] ml-11 opacity-80">
                       Historical View Matrix & Regression Trend
                     </Typography>
                   </div>
@@ -169,11 +169,11 @@ export default function PredictiveInsights() {
                   <div className="flex items-center gap-8 bg-gray-100 dark:bg-white/5 p-4 rounded-2xl backdrop-blur-md border border-gray-200 dark:border-white/5">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                      <span className="text-[9px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-widest">Est. Views</span>
+                      <span className="text-[9px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">Est. Views</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-5 h-px bg-indigo-400 border-t border-dashed border-indigo-400" />
-                      <span className="text-[9px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-widest">Regression Model</span>
+                      <span className="text-[9px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">Regression Model</span>
                     </div>
                   </div>
                 </div>
@@ -292,7 +292,7 @@ export default function PredictiveInsights() {
                       <Typography variant="h2" className="font-black text-gray-900 dark:text-white tracking-tighter tabular-nums drop-shadow-sm">
                         {prediction.virality_score}%
                       </Typography>
-                      <Typography className="text-[10px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-[0.3em]">
+                      <Typography className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-[0.3em]">
                         Virality Sigma
                       </Typography>
                     </div>
@@ -301,7 +301,7 @@ export default function PredictiveInsights() {
                   <Typography variant="h5" className="font-black text-gray-900 dark:text-white mb-3 uppercase tracking-tight">
                     {prediction.virality_score > 70 ? "Viral Vector Active" : prediction.virality_score > 40 ? "Elevated Momentum" : "Stable Growth Signal"}
                   </Typography>
-                  <Typography className="text-xs text-gray-600 dark:text-zinc-500 font-bold leading-relaxed max-w-[200px]">
+                  <Typography className="text-xs text-gray-600 dark:text-zinc-400 font-bold leading-relaxed max-w-[200px]">
                     Cross-platform engagement delta analysis confirmed.
                   </Typography>
                 </Paper>
@@ -325,7 +325,7 @@ export default function PredictiveInsights() {
                       <Typography variant="h3" className="text-gray-900 dark:text-white font-black tracking-tighter tabular-nums mb-1">
                         +{f.val.toLocaleString()}
                       </Typography>
-                      <Typography className="text-[10px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-widest opacity-60">
+                      <Typography className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest opacity-60">
                         {f.sub}
                       </Typography>
                     </Paper>

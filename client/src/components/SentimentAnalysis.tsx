@@ -80,7 +80,7 @@ export default function SentimentAnalysis() {
   const maxEmotion = sentiment ? Math.max(...Object.values(sentiment.emotions), 1) : 1;
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 sm:p-10 space-y-12 sm:space-y-16 mb-20">
+    <div className="w-full max-w-7xl mx-auto p-4 sm:p-10 space-y-12 sm:space-y-16 mb-20">
       <style jsx global>{borderBeamAnimation}</style>
 
       {/* Header Section */}
@@ -93,7 +93,7 @@ export default function SentimentAnalysis() {
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tighter flex flex-wrap items-center gap-x-3 gap-y-1">
               Audience <span className="text-purple-600 dark:text-purple-500 drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]">Sentiment</span>
             </h3>
-            <p className="text-gray-500 dark:text-zinc-500 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
+            <p className="text-gray-500 dark:text-zinc-400 font-black uppercase text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2 flex flex-wrap items-center gap-2">
               Neural Mood Analysis <span className="hidden sm:block w-8 h-px bg-zinc-800 dark:bg-white/10" /> Engagement Sigma
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function SentimentAnalysis() {
                       <Typography variant="h2" className={`font-black tracking-tighter tabular-nums ${label?.color} drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:drop-shadow-[0_0_15px_rgba(0,0,0,0.2)]`}>
                         {Math.round(((sentiment.average_polarity + 1) / 2) * 100)}
                       </Typography>
-                      <Typography className="text-[10px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-[0.3em] mt-1">
+                      <Typography className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-[0.3em] mt-1">
                         Neural Score
                       </Typography>
                     </div>
@@ -179,7 +179,7 @@ export default function SentimentAnalysis() {
                       <Typography variant="h3" className={`font-black tracking-tighter mb-2 ${label?.color}`}>
                         {label?.text} Vibe Detected
                       </Typography>
-                      <Typography className="text-gray-600 dark:text-zinc-500 font-bold tracking-tight">
+                      <Typography className="text-gray-600 dark:text-zinc-400 font-bold tracking-tight">
                         Aggregated from <span className="text-gray-900 dark:text-white font-black">{sentiment.total}</span> audience interaction signals across the matrix.
                       </Typography>
                     </div>
@@ -240,7 +240,7 @@ export default function SentimentAnalysis() {
                         <div className="relative z-10">
                           <div className="flex items-center gap-2 mb-4">
                             <i className={`fa-solid ${config.icon} ${config.color} text-lg`} />
-                            <span className="text-[9px] font-black text-gray-500 dark:text-zinc-500 uppercase tracking-widest">{emotion}</span>
+                            <span className="text-[9px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{emotion}</span>
                           </div>
                           <Typography className="text-3xl font-black text-gray-900 dark:text-white tabular-nums">
                             {count}
