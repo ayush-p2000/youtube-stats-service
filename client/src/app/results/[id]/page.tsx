@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setIsNavigating } from "@/lib/features/videoSlice";
+import ErrorSnackbar from "@/components/ErrorSnackbar";
 import SentimentAnalysis from "@/components/SentimentAnalysis";
 import TopicExtraction from "@/components/TopicExtraction";
 import PredictiveInsights from "@/components/PredictiveInsights";
@@ -21,7 +22,7 @@ import VideoDownloadDialog from "@/components/downloadDialogBox";
 export default function ResultsPage() {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { videoId, stats, statsLoading, error, url } = useAppSelector((state) => state.video);
+  const { videoId, stats, statsLoading, error, url, isLimitedMode } = useAppSelector((state) => state.video);
 
   const fetchedVideoIdRef = useRef<string | null>(null);
 
@@ -106,7 +107,7 @@ export default function ResultsPage() {
             </div>
 
             {/* Show error context if stats are missing but we are essentially valid */}
-            {!stats && !statsLoading && videoId && (
+            {isLimitedMode && !stats && !statsLoading && videoId && (
               <div className="hidden md:flex flex-col items-end px-4 border-r-2 border-gray-200/50 dark:border-white/10 mr-4">
                 <span className="text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Limited Mode</span>
               </div>
@@ -128,8 +129,11 @@ export default function ResultsPage() {
           </div>
         </motion.div>
 
-        {/* Main Content */}
-        {error && !videoId && (
+        {/* Error Popup — dismissible, shown for any error */}
+        <ErrorSnackbar />
+
+        {/* Analysis Failed Block — shown for non-limited errors when stats are missing */}
+        {error && !stats && !isLimitedMode && !statsLoading && (
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
             <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30 p-6 sm:p-8 rounded-2xl shadow-lg">
               <h2 className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
@@ -140,6 +144,7 @@ export default function ResultsPage() {
               </p>
               <Link
                 href="/"
+                onClick={() => dispatch(setIsNavigating(true))}
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 Try Another URL
@@ -148,8 +153,8 @@ export default function ResultsPage() {
           </div>
         )}
 
-        {/* Download Only Mode (Valid Video ID but Stats Failed/Missing) */}
-        {videoId && (!stats || error) && (
+        {/* Download Only Mode — shown ONLY when no API key (limited mode) */}
+        {videoId && isLimitedMode && !statsLoading && (
           <div className="flex flex-col items-center justify-center min-h-[50vh] animate-in fade-in duration-700">
             <div className="p-8 sm:p-12 bg-white/50 dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-3xl shadow-2xl flex flex-col items-center gap-8 text-center max-w-2xl w-full mx-4">
               <div className="flex flex-col gap-2">
@@ -202,7 +207,7 @@ export default function ResultsPage() {
           </div>
         )}
 
-        {!error && stats && (
+        {!isLimitedMode && stats && (
           <>
             <StatsDisplay />
             <SentimentAnalysis />

@@ -9,7 +9,9 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
-    "types": [],
+    "types": [
+      "node"
+    ],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -40,6 +42,12 @@
   "ts-node": {
     "esm": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["api/**", "node_modules"]
+  "include": [
+    "src/**/*.ts",
+    "*.ts"
+  ],
+  "exclude": [
+    "api/**",
+    "node_modules"
+  ]
 }

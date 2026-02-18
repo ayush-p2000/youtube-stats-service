@@ -255,8 +255,8 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
     setLoadingExts(true);
     try {
       const serverUrl =
-        process.env.NEXT_PUBLIC_SERVER_URL ||
-        (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+        process.env.NEXT_PUBLIC_ML_SERVER_URL ||
+        (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
       const res = await fetch(`${serverUrl}/api/formats`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -447,8 +447,8 @@ export function useVideoDownload({ videoUrl, videoTitle }: UseVideoDownloadProps
 
     try {
       const serverUrl =
-        process.env.NEXT_PUBLIC_SERVER_URL ||
-        (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+        process.env.NEXT_PUBLIC_ML_SERVER_URL ||
+        (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
 
       // 1. Initiate Download Job
       setProgressStage('Requesting download job...');

@@ -98,6 +98,7 @@ interface VideoState {
     predictionLoading: boolean;
     earningsLoading: boolean;
     isNavigating: boolean;
+    isLimitedMode: boolean;
     error: string | null;
     apiKey: string | null;
 }
@@ -117,6 +118,7 @@ const initialState: VideoState = {
     predictionLoading: false,
     earningsLoading: false,
     isNavigating: false,
+    isLimitedMode: false,
     error: null,
     apiKey: null,
 }
@@ -202,15 +204,19 @@ export const analyzeSentiment = createAsyncThunk(
     async (videoId: string, { rejectWithValue, getState }) => {
         try {
             const state = getState() as { video: VideoState };
-            const apiKey = state.video.apiKey;
+            const comments = state.video.comments.map(c => c.text);
 
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
-            const response = await fetch(`${serverUrl}/api/analyze-sentiment`, {
+            if (!comments.length) {
+                return rejectWithValue('No comments available for analysis');
+            }
+
+            const mlServerUrl = process.env.NEXT_PUBLIC_ML_SERVER_URL || 'http://localhost:5001';
+            const response = await fetch(`${mlServerUrl}/api/analyze-sentiment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ videoId, apiKey }),
+                body: JSON.stringify({ videoId, comments }),
             });
 
             const data = await response.json();
@@ -235,8 +241,8 @@ export const predictMetrics = createAsyncThunk(
             const state = getState() as { video: VideoState };
             const apiKey = state.video.apiKey;
 
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
-            const response = await fetch(`${serverUrl}/api/predict/${videoId}`, {
+            const mlServerUrl = process.env.NEXT_PUBLIC_ML_SERVER_URL || 'http://localhost:5001';
+            const response = await fetch(`${mlServerUrl}/api/predict/${videoId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -266,8 +272,8 @@ export const fetchEarnings = createAsyncThunk(
             const state = getState() as { video: VideoState };
             const apiKey = state.video.apiKey;
 
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
-            const response = await fetch(`${serverUrl}/api/earnings/${videoId}`, {
+            const mlServerUrl = process.env.NEXT_PUBLIC_ML_SERVER_URL || 'http://localhost:5001';
+            const response = await fetch(`${mlServerUrl}/api/earnings/${videoId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -317,6 +323,10 @@ export const videoSlice = createSlice({
             state.predictionLoading = false;
             state.earningsLoading = false;
             state.isNavigating = false;
+            state.isLimitedMode = false;
+            state.error = null;
+        },
+        clearError: (state) => {
             state.error = null;
         },
         setIsNavigating: (state, action: PayloadAction<boolean>) => {
@@ -340,6 +350,7 @@ export const videoSlice = createSlice({
                 state.prediction = null;
                 state.earnings = null;
                 state.nextPageToken = null;
+                state.isLimitedMode = false;
                 // Mark that we're navigating from landing to results
                 state.isNavigating = true;
             })
@@ -377,6 +388,7 @@ export const videoSlice = createSlice({
                 } else if (action.payload.stats === null && !action.payload.isAppend) {
                     // Explicitly clear stats if limited mode and not appending
                     state.stats = null;
+                    state.isLimitedMode = true;
                 }
 
                 if (action.payload.isAppend) {
@@ -442,6 +454,6 @@ export const videoSlice = createSlice({
     },
 })
 
-export const { setVideoUrl, setApiKey, setRedirectId, resetVideoState, clearRedirectId, setIsNavigating } = videoSlice.actions
+export const { setVideoUrl, setApiKey, setRedirectId, resetVideoState, clearRedirectId, setIsNavigating, clearError } = videoSlice.actions
 
 export default videoSlice.reducer
