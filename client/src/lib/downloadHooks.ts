@@ -153,14 +153,10 @@ export function useVideoDownload({ videoUrl }: UseVideoDownloadProps): UseVideoD
 
   // Filter qualities based on selected options
   const filteredQualities = useMemo(() => {
-    let filtered = effectiveFormats;
-
-    // Filter by format if selected
-    if (selectedFormat) {
-      filtered = filtered.filter((f) => f.ext === selectedFormat);
-    }
-
-    // NOTE: We do NOT filter by bitrate here anymore.
+    // NOTE: We do NOT filter by format here anymore.
+    // This allows users to see 4K/1440p resolutions even if "MP4" is selected.
+    // handleQualityChange will automatically switch the format if needed.
+    const filtered = effectiveFormats;
 
     const unique = Array.from(new Set(filtered.map((f) => f.quality).filter((q): q is string => q !== undefined)));
     return unique.sort((a, b) => {
@@ -168,7 +164,7 @@ export function useVideoDownload({ videoUrl }: UseVideoDownloadProps): UseVideoD
       const numB = parseInt(b.replace('p', '') || '0');
       return numB - numA; // Sort descending
     });
-  }, [effectiveFormats, selectedFormat]);
+  }, [effectiveFormats]);
 
   // Filter bitrates based on selected options
   const filteredBitrates = useMemo(() => {
