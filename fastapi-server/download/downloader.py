@@ -19,19 +19,16 @@ from download.schemas import FormatOption
 
 # ── Constants ─────────────────────────────────────────────
 
-SABR_BLOCKED_FORMAT_IDS = {
-    "394", "395", "396", "397", "398", "399",   # AV1 144p–1080p
-    "330", "331", "332", "333", "334", "335",   # AV1 HDR
-    "694", "695", "696", "697", "698", "699",   # AV1 HDR alt
-}
-
 BASE_ARGS = [
     "--no-playlist",
     "--js-runtimes", "node,nodejs",
     "--impersonate", "chrome",
-    "--extractor-args", "youtube:player-client=ios,android,mweb",
+    "--extractor-args", "youtube:player-client=web,tvhtml5,android,ios",
     "--add-header", "Accept-Language: en-US,en;q=0.5",
 ]
+
+# Note: We removed the SABR_BLOCKED_FORMAT_IDS as modern yt-dlp versions 
+# handle AV1/VP9 better during merging and listing.
 
 
 # ── Helpers ───────────────────────────────────────────────
@@ -191,23 +188,15 @@ def _build_download_args(
             args += ["--merge-output-format", merge_ext]
     elif quality:
         height = quality.replace("p", "")
-        if ext:
-            fmt_sel = (
-                f"bestvideo[height<={height}][ext={ext}][vcodec^=avc]"
-                f"+bestaudio[ext=m4a]"
-                f"/bestvideo[height<={height}][ext={ext}]+bestaudio"
-                f"/bestvideo[height<={height}]+bestaudio"
-                f"/best[height<={height}]"
-                f"/best"
-            )
-        else:
-            fmt_sel = (
-                f"bestvideo[height<={height}][ext=mp4][vcodec^=avc]"
-                f"+bestaudio[ext=m4a]"
-                f"/bestvideo[height<={height}]+bestaudio"
-                f"/best[height<={height}]"
-                f"/best"
-            )
+        # Primary: Best AVC video + M4A audio (Fast & Compatible)
+        # Secondary: Best available video at height + Best audio (Quality)
+        # Fallback: Best legacy format at or below height
+        fmt_sel = (
+            f"bestvideo[height<={height}][vcodec^=avc]+bestaudio[ext=m4a]"
+            f"/bestvideo[height<={height}]+bestaudio"
+            f"/best[height<={height}]"
+            f"/best"
+        )
         args += ["-f", fmt_sel]
         args += ["--merge-output-format", ext or "mp4"]
     else:
