@@ -23,7 +23,7 @@ BASE_ARGS = [
     "--no-playlist",
     "--js-runtimes", "node,nodejs",
     "--impersonate", "chrome",
-    "--extractor-args", "youtube:player-client=web,tvhtml5,android,ios",
+    "--extractor-args", "youtube:player-client=tvhtml5,android_vr,android_embedded,ios;player_skip=web,mweb",
     "--add-header", "Accept-Language: en-US,en;q=0.5",
 ]
 
