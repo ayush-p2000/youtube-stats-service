@@ -39,9 +39,9 @@ COPY --from=builder /opt/venv /opt/venv
 COPY --chown=appuser:appuser . .
 
 # Set environment variables
-# NOTE: Do NOT set PORT here — Railway injects it dynamically at runtime.
 ENV PATH="/opt/venv/bin:$PATH" \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PORT=5001
 
 # Create download directory
 RUN mkdir -p /app/download && chown appuser:appuser /app/download
@@ -49,12 +49,12 @@ RUN mkdir -p /app/download && chown appuser:appuser /app/download
 # Switch to non-root user
 USER appuser
 
-# Expose port (Railway overrides this with its own $PORT at runtime)
-EXPOSE 8000
+# Expose port
+EXPOSE 5001
 
-# Health check — uses $PORT so it works on Railway and locally
-HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD /opt/venv/bin/python -c "import urllib.request, os; urllib.request.urlopen('http://localhost:' + os.environ.get('PORT','8000') + '/api/health')" || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5001/api/health')" || exit 1
 
-# Run application — shell form so $PORT is expanded from Railway's injected env var
-CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Run application (exec form for proper signal handling)
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5001"]
