@@ -27,8 +27,9 @@ SABR_BLOCKED_FORMAT_IDS = {
 
 BASE_ARGS = [
     "--no-playlist",
+    "--js-runtimes", "node",
     "--impersonate", "chrome",
-    "--extractor-args", "youtube:player-client=android_vr,web,web_safari"
+    "--extractor-args", "youtube:player-client=web,web_safari,android_vr"
 ]
 
 
