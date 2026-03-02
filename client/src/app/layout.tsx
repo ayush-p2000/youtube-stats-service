@@ -1,19 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import Footer from "@/components/Footer";
+import FontAwesomeLoader from "@/components/FontAwesomeLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: 'swap',
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  display: 'swap',
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -86,38 +95,13 @@ export default function RootLayout({
           href="https://cdnjs.cloudflare.com"
           crossOrigin="anonymous"
         />
-        <link
-          rel="preload"
-          as="style"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-          crossOrigin="anonymous"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              var l=document.createElement('link');
-              l.rel='stylesheet';
-              l.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
-              l.crossOrigin='anonymous';
-              l.referrerPolicy='no-referrer';
-              document.head.appendChild(l);
-            `,
-          }}
-        />
-        <noscript>
-          <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-            crossOrigin="anonymous"
-            referrerPolicy="no-referrer"
-          />
-        </noscript>
       </head>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen transition-colors duration-300 text-foreground bg-background`}
+        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased min-h-screen transition-colors duration-300 text-foreground bg-background`}
       >
         <Providers>
+          <FontAwesomeLoader />
           <Navbar />
           <LoadingOverlay />
           <main id="main-content">{children}</main>

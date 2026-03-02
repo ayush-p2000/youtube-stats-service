@@ -6,18 +6,20 @@ import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setIsNavigating } from "@/lib/features/videoSlice";
 import ErrorSnackbar from "@/components/ErrorSnackbar";
-import SentimentAnalysis from "@/components/SentimentAnalysis";
-import TopicExtraction from "@/components/TopicExtraction";
-import PredictiveInsights from "@/components/PredictiveInsights";
-import EarningsDisplay from "@/components/EarningsDisplay";
-import StatsDisplay from "@/components/StatsDisplay";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { IconButton } from "@mui/material";
-import { Download } from "@mui/icons-material";
+import Download from "@mui/icons-material/Download";
 import { useVideoDownload } from "@/lib/downloadHooks";
 import { fetchVideoStatsIfNeeded } from "@/lib/features/DownloadActions";
-import VideoDownloadDialog from "@/components/downloadDialogBox";
+import dynamic from "next/dynamic";
+
+const SentimentAnalysis = dynamic(() => import("@/components/SentimentAnalysis"), { ssr: false });
+const TopicExtraction = dynamic(() => import("@/components/TopicExtraction"), { ssr: false });
+const PredictiveInsights = dynamic(() => import("@/components/PredictiveInsights"), { ssr: false });
+const EarningsDisplay = dynamic(() => import("@/components/EarningsDisplay"), { ssr: false });
+const StatsDisplay = dynamic(() => import("@/components/StatsDisplay"), { ssr: false });
+const VideoDownloadDialog = dynamic(() => import("@/components/downloadDialogBox"), { ssr: false });
 
 export default function ResultsPage() {
   const { id } = useParams();

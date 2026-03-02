@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { setVideoUrl, parseVideoUrl, clearRedirectId, resetVideoState, setApiKey } from "@/lib/features/videoSlice";
 import { useRouter } from "next/navigation";
-import { Search, PlayArrow, CheckCircle, ErrorOutline } from '@mui/icons-material';
+import Search from '@mui/icons-material/Search';
+import PlayArrow from '@mui/icons-material/PlayArrow';
+import CheckCircle from '@mui/icons-material/CheckCircle';
+import ErrorOutline from '@mui/icons-material/ErrorOutline';
 
 export default function UrlInput() {
     const dispatch = useAppDispatch();
@@ -98,7 +101,7 @@ export default function UrlInput() {
                 <div className="flex flex-col gap-2 px-1">
                     <button
                         onClick={() => setShowApiKey(!showApiKey)}
-                        className="self-start flex items-center gap-1.5 text-xs font-bold text-gray-400 dark:text-zinc-600 hover:text-red-500 dark:hover:text-red-400 transition-colors uppercase tracking-wider"
+                        className="self-start flex items-center gap-1.5 text-xs font-bold text-gray-500 dark:text-zinc-400 hover:text-red-500 dark:hover:text-red-400 transition-colors uppercase tracking-wider"
                     >
                         {showApiKey ? <i className="fa-solid fa-chevron-up" /> : <i className="fa-solid fa-key" />}
                         {showApiKey ? 'Hide API Key' : 'Have a YouTube Data API Key?'}

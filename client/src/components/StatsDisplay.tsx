@@ -2,16 +2,14 @@
 
 import React from "react";
 import { useAppSelector } from '@/lib/hooks';
-import {
-    Visibility,
-    ThumbUp,
-    Comment,
-    TrendingUp,
-    ChatBubbleOutline,
-    Bolt,
-    BarChart,
-    LocalFireDepartment
-} from '@mui/icons-material';
+import Visibility from '@mui/icons-material/Visibility';
+import ThumbUp from '@mui/icons-material/ThumbUp';
+import Comment from '@mui/icons-material/Comment';
+import TrendingUp from '@mui/icons-material/TrendingUp';
+import ChatBubbleOutline from '@mui/icons-material/ChatBubbleOutline';
+import Bolt from '@mui/icons-material/Bolt';
+import BarChart from '@mui/icons-material/BarChart';
+import LocalFireDepartment from '@mui/icons-material/LocalFireDepartment';
 import { motion } from "framer-motion";
 import { Paper, Typography } from "@mui/material";
 

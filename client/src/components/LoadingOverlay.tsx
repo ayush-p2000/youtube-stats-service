@@ -1,7 +1,8 @@
 'use client'
 
 import { useAppSelector } from '@/lib/hooks'
-import { PlayArrow, Analytics } from '@mui/icons-material'
+import PlayArrow from '@mui/icons-material/PlayArrow'
+import Analytics from '@mui/icons-material/Analytics'
 
 export default function LoadingOverlay() {
     const { statsLoading, sentimentLoading, predictionLoading, isNavigating } = useAppSelector((state) => state.video)

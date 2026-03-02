@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import UrlInput from "@/components/UrlInput";
 import JsonLd from "@/components/JsonLd";
-import { Analytics, TrendingUp, Psychology } from '@mui/icons-material';
+import Analytics from '@mui/icons-material/Analytics';
+import TrendingUp from '@mui/icons-material/TrendingUp';
+import Psychology from '@mui/icons-material/Psychology';
 
 export const metadata: Metadata = {
   title: "Analyze Any YouTube Video | AI-Powered Stats & Sentiment",

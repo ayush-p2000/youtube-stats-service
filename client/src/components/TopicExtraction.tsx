@@ -2,7 +2,8 @@
 
 import React from "react";
 import { useAppSelector } from "@/lib/hooks";
-import { Tag, Info } from "@mui/icons-material";
+import Tag from "@mui/icons-material/Tag";
+import Info from "@mui/icons-material/Info";
 import { motion } from "framer-motion";
 import { Paper, Typography } from "@mui/material";
 
