@@ -1,0 +1,16 @@
+{
+    "name": "YouTube Stats Analyzer",
+    "short_name": "YT Stats",
+    "description": "Analyze YouTube video statistics, audience sentiment, and engagement metrics using AI.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f5f5f7",
+    "theme_color": "#dc2626",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "any",
+            "type": "image/x-icon"
+        }
+    ]
+}

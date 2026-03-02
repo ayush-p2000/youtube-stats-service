@@ -16,10 +16,57 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "YouTube Stats Analyzer | AI Sentiment",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "YouTube Stats Analyzer | AI-Powered Video Analytics & Sentiment",
+    template: "%s | YouTube Stats Analyzer",
+  },
   description:
-    "Analyze YouTube video statistics and audience sentiment using AI.",
+    "Analyze YouTube video statistics, audience sentiment, and engagement metrics using advanced AI and machine learning. Get predictive insights, topic extraction, and earnings estimates.",
+  keywords: [
+    "YouTube analytics",
+    "video statistics",
+    "sentiment analysis",
+    "AI video analysis",
+    "YouTube engagement metrics",
+    "predictive insights",
+    "audience sentiment",
+    "YouTube earnings estimator",
+    "video performance analytics",
+    "machine learning",
+  ],
+  applicationName: "YouTube Stats Analyzer",
+  authors: [{ name: "YouTube Analytics Suite" }],
+  creator: "YouTube Analytics Suite",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "YouTube Stats Analyzer",
+    title: "YouTube Stats Analyzer | AI-Powered Video Analytics & Sentiment",
+    description:
+      "Analyze YouTube video statistics, audience sentiment, and engagement metrics using advanced AI and machine learning.",
+    url: siteUrl,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "YouTube Stats Analyzer | AI-Powered Video Analytics & Sentiment",
+    description:
+      "Analyze YouTube video statistics, audience sentiment, and engagement metrics using advanced AI and machine learning.",
+  },
 };
 
 export default function RootLayout({
@@ -49,7 +96,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <LoadingOverlay />
-          {children}
+          <main id="main-content">{children}</main>
           <Footer />
         </Providers>
       </body>
