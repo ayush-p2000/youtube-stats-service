@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import ThemeToggle from './ThemeToggle'
-import { PlayArrow } from '@mui/icons-material'
+import PlayArrow from '@mui/icons-material/PlayArrow'
 import { motion } from 'framer-motion'
 
 export default function Navbar() {
@@ -34,7 +34,7 @@ export default function Navbar() {
                     </div>
 
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-black tracking-[0.4em] uppercase text-gray-400 dark:text-zinc-500 leading-none mb-1">
+                        <span className="text-[10px] font-black tracking-[0.4em] uppercase text-gray-500 dark:text-zinc-400 leading-none mb-1">
                             Neural Node
                         </span>
                         <span className="font-black text-lg sm:text-xl tracking-tighter text-gray-900 dark:text-white group-hover:bg-linear-to-r group-hover:from-red-600 group-hover:to-rose-500 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">

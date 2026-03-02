@@ -3,16 +3,14 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { analyzeSentiment } from "@/lib/features/videoSlice";
-import {
-  Psychology,
-  SentimentSatisfied,
-  SentimentNeutral,
-  SentimentDissatisfied,
-  SmartToy,
-  EmojiEmotions,
-  ArrowForward,
-  AutoAwesome
-} from "@mui/icons-material";
+import Psychology from "@mui/icons-material/Psychology";
+import SentimentSatisfied from "@mui/icons-material/SentimentSatisfied";
+import SentimentNeutral from "@mui/icons-material/SentimentNeutral";
+import SentimentDissatisfied from "@mui/icons-material/SentimentDissatisfied";
+import SmartToy from "@mui/icons-material/SmartToy";
+import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
+import ArrowForward from "@mui/icons-material/ArrowForward";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import { motion, AnimatePresence } from "framer-motion";
 import { Paper, Typography } from "@mui/material";
 

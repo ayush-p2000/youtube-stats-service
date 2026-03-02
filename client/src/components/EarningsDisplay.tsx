@@ -17,17 +17,15 @@ import {
     AreaChart,
     Area
 } from "recharts";
-import {
-    AccountBalanceWallet,
-    AttachMoney,
-    TrendingUp,
-    CalendarMonth,
-    InfoOutlined,
-    AutoAwesome,
-    BarChart,
-    Bolt,
-    ArrowForward
-} from "@mui/icons-material";
+import AccountBalanceWallet from "@mui/icons-material/AccountBalanceWallet";
+import AttachMoney from "@mui/icons-material/AttachMoney";
+import TrendingUp from "@mui/icons-material/TrendingUp";
+import CalendarMonth from "@mui/icons-material/CalendarMonth";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
+import BarChart from "@mui/icons-material/BarChart";
+import Bolt from "@mui/icons-material/Bolt";
+import ArrowForward from "@mui/icons-material/ArrowForward";
 import {
     Paper,
     Typography

@@ -5,14 +5,12 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { predictMetrics } from "@/lib/features/videoSlice";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
-import {
-  TrendingUp,
-  AutoAwesome,
-  Lightbulb,
-  ShowChart,
-  ArrowForward,
-  Timeline
-} from "@mui/icons-material";
+import TrendingUp from "@mui/icons-material/TrendingUp";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
+import Lightbulb from "@mui/icons-material/Lightbulb";
+import ShowChart from "@mui/icons-material/ShowChart";
+import ArrowForward from "@mui/icons-material/ArrowForward";
+import Timeline from "@mui/icons-material/Timeline";
 import {
   XAxis,
   YAxis,

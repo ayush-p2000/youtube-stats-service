@@ -2,7 +2,8 @@
 
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
-import { LightMode, DarkMode } from '@mui/icons-material'
+import LightMode from '@mui/icons-material/LightMode'
+import DarkMode from '@mui/icons-material/DarkMode'
 
 export default function ThemeToggle() {
     const { theme, setTheme } = useTheme()
