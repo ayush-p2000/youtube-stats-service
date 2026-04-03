@@ -11,7 +11,10 @@ export default function ThemeToggle() {
 
     // Avoid hydration mismatch: only render actual toggle on client
     useEffect(() => {
-        setMounted(true)
+        const frame = requestAnimationFrame(() => {
+            setMounted(true)
+        })
+        return () => cancelAnimationFrame(frame)
     }, [])
 
     if (!mounted) {
